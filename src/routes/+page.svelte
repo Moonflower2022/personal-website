@@ -14,20 +14,29 @@
 </script>
 
 <svelte:head>
+    <!-- import two different versions of font awesome so all the icons work -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 </svelte:head>
 
 <main>
     <h1>Moonflower</h1>
     <section class="section">
         <h2>socials</h2>
-        <a class="fa fa-envelope fa-2x icon-3d" href="mailto:dumbderivatives@gmail.com" role="button" aria-label="email link"></a>
-        <a class="fa fa-youtube fa-2x icon-3d" href="https://www.youtube.com/@DumbDerivatives" role="button" aria-label="youtube link"></a>
-        <a class="fa fa-github fa-2x icon-3d" href="https://github.com/Moonflower2022" role="button" aria-label="github link"></a>
-        <a class="fa fa-spotify fa-2x icon-3d" href="https://open.spotify.com/user/31u2cwuyeyr56ntpdz4kdbnewhqe" role="button" aria-label="spotify link"></a>
+        <a class="fa fa-envelope fa-2x icon-3d" target="_blank" href="mailto:dumbderivatives@gmail.com" role="button" aria-label="email link"></a>
+        <a class="fa fa-youtube fa-2x icon-3d" target="_blank" href="https://www.youtube.com/@DumbDerivatives" role="button" aria-label="youtube link"></a>
+        <a class="fa fa-github fa-2x icon-3d" target="_blank" href="https://github.com/Moonflower2022" role="button" aria-label="github link"></a>
+        <a class="fa fa-spotify fa-2x icon-3d" target="_blank" href="https://open.spotify.com/user/31u2cwuyeyr56ntpdz4kdbnewhqe" role="button" aria-label="spotify link"></a>
+        <a class="fa fa-chess-pawn fa-2x icon-3d" target="_blank" href="https://www.chess.com/member/moonflower2022" role="button" aria-label="chess link"></a>
     </section>
 
     <section class="section">
@@ -73,6 +82,8 @@
     .section {
         margin-bottom: 1.5rem;
     }
+
+    /* RED BLUE ICON STUFF (credit: https://codepen.io/miguelcast/pen/pwZMOJ)  */
 
     .icon-3d {
         padding: 10px;
