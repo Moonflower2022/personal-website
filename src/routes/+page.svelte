@@ -35,41 +35,41 @@
     <h1>Moonflower</h1>
     <section class="section">
         <h2>socials</h2>
-        <a
+        <i
             class="fa fa-envelope fa-2x icon-3d"
             target="_blank"
             href="mailto:dumbderivatives@gmail.com"
             role="button"
             aria-label="email link"
-        ></a>
-        <a
+        ></i>
+        <i
             class="fa fa-youtube fa-2x icon-3d"
             target="_blank"
             href="https://www.youtube.com/@DumbDerivatives"
             role="button"
             aria-label="youtube link"
-        ></a>
-        <a
+        ></i>
+        <i
             class="fa fa-github fa-2x icon-3d"
             target="_blank"
             href="https://github.com/Moonflower2022"
             role="button"
             aria-label="github link"
-        ></a>
-        <a
+        ></i>
+        <i
             class="fa fa-spotify fa-2x icon-3d"
             target="_blank"
             href="https://open.spotify.com/user/31u2cwuyeyr56ntpdz4kdbnewhqe"
             role="button"
             aria-label="spotify link"
-        ></a>
-        <a
+        ></i>
+        <i
             class="fa fa-chess-pawn fa-2x icon-3d"
             target="_blank"
             href="https://www.chess.com/member/moonflower2022"
             role="button"
             aria-label="chess link"
-        ></a>
+        ></i>
     </section>
 
     <section class="section">
