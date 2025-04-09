@@ -87,7 +87,7 @@
 <style>
     @import url("https://fonts.googleapis.com/css2?family=Font+Name:wght@400;700&display=swap");
 
-    /* Global styles for dark theme */
+    /* Global styles (dark theme) */
     :global(body) {
         background-color: #000;
         color: #fff;
@@ -99,7 +99,6 @@
         color: #4da6ff;
     }
 
-    /* Your modified styles */
     main {
         font-family: "Space Mono", monospace;
         max-width: 600px;
@@ -110,6 +109,15 @@
 
     h1 {
         text-align: center;
+    }
+    
+    ul {
+        margin-top: 0px;
+        padding-left: 25px;
+    }
+
+    p ~ ul {
+        margin-top: -10px;
     }
 
     .section {
