@@ -1,6 +1,7 @@
 <script>
     import ImageGallery from "$lib/ImageGallery.svelte"
     import info from "$lib/info.json"
+    import icons from "$lib/icons.json"
 
     let n = 12
     let images = []
@@ -23,6 +24,7 @@
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+    <!-- Space Mono from google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -35,41 +37,14 @@
     <h1>Moonflower</h1>
     <section class="section">
         <h2>socials</h2>
-        <i
-            class="fa fa-envelope fa-2x icon-3d"
-            target="_blank"
-            href="mailto:dumbderivatives@gmail.com"
-            role="button"
-            aria-label="email link"
-        ></i>
-        <i
-            class="fa fa-youtube fa-2x icon-3d"
-            target="_blank"
-            href="https://www.youtube.com/@DumbDerivatives"
-            role="button"
-            aria-label="youtube link"
-        ></i>
-        <i
-            class="fa fa-github fa-2x icon-3d"
-            target="_blank"
-            href="https://github.com/Moonflower2022"
-            role="button"
-            aria-label="github link"
-        ></i>
-        <i
-            class="fa fa-spotify fa-2x icon-3d"
-            target="_blank"
-            href="https://open.spotify.com/user/31u2cwuyeyr56ntpdz4kdbnewhqe"
-            role="button"
-            aria-label="spotify link"
-        ></i>
-        <i
-            class="fa fa-chess-pawn fa-2x icon-3d"
-            target="_blank"
-            href="https://www.chess.com/member/moonflower2022"
-            role="button"
-            aria-label="chess link"
-        ></i>
+        {#each icons as icon}
+            <a href={icon.href} target="_blank" aria-label={icon.description}>
+                <i
+                    class="fa {icon.font_awesome_tag} fa-2x icon-3d"
+                    role="presentation"
+                ></i>
+            </a>
+        {/each}
     </section>
 
     <section class="section">
@@ -110,7 +85,7 @@
     h1 {
         text-align: center;
     }
-    
+
     ul {
         margin-top: 0px;
         padding-left: 25px;
