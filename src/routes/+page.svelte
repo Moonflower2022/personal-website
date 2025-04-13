@@ -56,7 +56,7 @@
             {/each}
         </ul>
     </section>
-    <h2><a href="./resume.pdf">resume</a></h2>
+    <h2><a href="resume.pdf" target="_blank">resume</a></h2>
     <ImageGallery {images} />
 </main>
 
