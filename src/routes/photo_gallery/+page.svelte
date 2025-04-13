@@ -11,5 +11,5 @@
 
 <main>
     <h1><a href="/">Moonflower</a></h1>
-    <ImageGallery {images} />
+    <ImageGallery backgroundColor="#000" {images} />
 </main>

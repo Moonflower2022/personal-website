@@ -1,5 +1,6 @@
 <script>
     export let images = []
+    export let backgroundColor = "#fff"
 
     import { onMount } from "svelte"
 
@@ -96,7 +97,7 @@
     $: imagePositions = calculateImagePositions(images.length)
 </script>
 
-<div class="gallery-container">
+<div class="gallery-container" style="background-color: {backgroundColor};">
     <div class="gallery-content" bind:this={container}>
         {#each images as image, i}
             {@const pos = imagePositions[i]}
@@ -143,7 +144,6 @@
         height: 80vh;
         margin: 40px 0;
         overflow: hidden;
-        background: linear-gradient(to bottom, #f8f8f8, #e8e8e8);
         border-radius: 12px;
         perspective: 1500px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
