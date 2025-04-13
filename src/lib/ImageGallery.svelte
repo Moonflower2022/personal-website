@@ -1,7 +1,7 @@
 <script>
     // CREDIT: Claude 3.7
-    export let images = []
     export let backgroundColor = "#fff"
+    export let images = []
 
     import { onMount } from "svelte"
 
@@ -15,7 +15,7 @@
     let hoveredIndex = -1
 
     // Configuration - Adjusted for higher quality
-    const rowSize = 3 // Number of images per row
+    const rowSize = Math.ceil(Math.sqrt(images.length)) // Number of images per row
     const zDistance = 800 // Reduced depth for better visibility
     const gridSpacing = 200 // Increased spacing
     const perspective = 1500 // Increased perspective
@@ -141,10 +141,8 @@
 <style>
     .gallery-container {
         position: relative;
+        top: 40vh;
         width: 100%;
-        height: 80vh;
-        margin: 40px 0;
-        overflow: hidden;
         border-radius: 12px;
         perspective: 1500px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -208,20 +206,10 @@
         object-fit: cover;
     }
 
-    /* Media queries for responsive adjustments */
-    @media (max-width: 768px) {
-        .gallery-item img,
-        .hover-image {
-            width: 180px;
-            height: 180px;
-        }
-    }
-
     @media (max-width: 480px) {
-        .gallery-item img,
         .hover-image {
-            width: 150px;
-            height: 150px;
+            max-width: 80vw;
+            max-height: 80vh;
         }
     }
 </style>

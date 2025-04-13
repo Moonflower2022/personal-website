@@ -1,15 +1,14 @@
 <script>
     import ImageGallery from "$lib/ImageGallery.svelte"
 
-    let n = 12
-    let images = []
-
-    for (let i = 1; i <= n; i++) {
-        images.push(`collage_images/${i}.jpeg`)
-    }
+    const imageFiles = import.meta.glob('/static/collage_images/*.jpeg', { eager: true });
+    const numberOfImages = Object.keys(imageFiles).length;
+    
+    // Get array of image paths
+    const imagePaths = Object.keys(imageFiles).map(path => path.replace('/static', ''));
 </script>
 
 <main>
     <h1><a href="/">Moonflower</a></h1>
-    <ImageGallery backgroundColor="#000" {images} />
+    <ImageGallery backgroundColor="#000" images={imagePaths} />
 </main>
