@@ -24,9 +24,7 @@
 </svelte:head>
 
   <style>
-    /* Your shared styles */
-    @import url("https://fonts.googleapis.com/css2?family=Font+Name:wght@400;700&display=swap");
-  
+
     /* Global styles (dark theme) */
     :global(body) {
       background-color: #000;
