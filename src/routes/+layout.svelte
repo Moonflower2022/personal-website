@@ -39,25 +39,6 @@
   
     :global(main) {
       font-family: "Space Mono", monospace;
-      max-width: 600px;
-      margin: 0 auto;
       color: #fff;
-    }
-  
-    :global(h1) {
-      text-align: center;
-    }
-  
-    :global(ul) {
-      margin-top: 0px;
-      padding-left: 25px;
-    }
-  
-    :global(p ~ ul) {
-      margin-top: -10px;
-    }
-  
-    :global(.section) {
-      margin-bottom: 1.5rem;
     }
   </style>

@@ -28,4 +28,26 @@
 </main>
 
 <style>
+    main {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    ul {
+      margin-top: 0px;
+      padding-left: 25px;
+    }
+  
+    p ~ ul {
+      margin-top: -10px;
+    }
+
+    .section {
+      margin-bottom: 1.5rem;
+    }
 </style>
