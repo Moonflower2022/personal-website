@@ -1,4 +1,5 @@
 <script>
+    // CREDIT: Claude 3.7
     export let images = []
     export let backgroundColor = "#fff"
 
