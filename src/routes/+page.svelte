@@ -1,6 +1,7 @@
 <script>
     import info from "$lib/info.json"
-    import icons from "$lib/icons.json"
+    import iconInfos from "$lib/iconInfos.json"
+    import SocialIcons from "$lib/SocialIcons.svelte"
 
     let email = info.email
     let interests = info.interests
@@ -10,14 +11,7 @@
     <h1><a href="/">Moonflower</a></h1>
     <section class="section">
         <h2>socials</h2>
-        {#each icons as icon}
-            <a href={icon.href} target="_blank" aria-label={icon.description}>
-                <i
-                    class="fa {icon.font_awesome_tag} fa-2x icon-3d"
-                    role="presentation"
-                ></i>
-            </a>
-        {/each}
+        <SocialIcons iconInfos={iconInfos}></SocialIcons>
     </section>
 
     <section class="section">
@@ -34,43 +28,4 @@
 </main>
 
 <style>
-    /* RED BLUE ICON STUFF (credit: https://codepen.io/miguelcast/pen/pwZMOJ)  */
-
-    .icon-3d {
-        padding: 10px;
-        animation: icon3d 200ms 10;
-        color: #fff;
-    }
-
-    .icon-3d:hover {
-        animation: icon3d 200ms infinite;
-    }
-
-    @keyframes icon3d {
-        0% {
-            text-shadow:
-                5px 4px rgba(244, 67, 54, 1),
-                -5px -6px rgba(33, 150, 243, 1);
-        }
-        25% {
-            text-shadow:
-                -5px -6px rgba(244, 67, 54, 1),
-                5px 4px rgba(33, 150, 243, 1);
-        }
-        50% {
-            text-shadow:
-                5px -4px rgba(244, 67, 54, 1),
-                -8px 4px rgba(33, 150, 243, 1);
-        }
-        75% {
-            text-shadow:
-                -8px -4px rgba(244, 67, 54, 1),
-                -5px -4px rgba(33, 150, 243, 1);
-        }
-        100% {
-            text-shadow:
-                -5px 0 rgba(244, 67, 54, 1),
-                5px -4px rgba(33, 150, 243, 1);
-        }
-    }
 </style>
