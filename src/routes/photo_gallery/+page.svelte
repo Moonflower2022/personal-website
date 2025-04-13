@@ -1,5 +1,5 @@
 <script>
-    import ImageGallery from "$lib/ImageGallery.svelte"
+    import Gallery from "$lib/Gallery.svelte"
 
     const imageFiles = import.meta.glob('/static/collage_images/*.jpeg', { eager: true });
     const numberOfImages = Object.keys(imageFiles).length;
@@ -10,5 +10,16 @@
 
 <main>
     <h1><a href="/">Moonflower</a></h1>
-    <ImageGallery backgroundColor="#000" images={imagePaths} />
+    <Gallery 
+  images={imagePaths} 
+  gap={10} 
+  maxColumnWidth={250} 
+  hover={true} 
+/>
 </main>
+
+<style>
+    h1 {
+      text-align: center;
+    }
+</style>
