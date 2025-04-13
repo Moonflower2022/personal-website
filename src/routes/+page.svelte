@@ -1,19 +1,13 @@
 <script>
     import info from "$lib/info.json"
-    import iconInfos from "$lib/iconInfos.json"
-    import SocialIcons from "$lib/SocialIcons.svelte"
+    import Header from "$lib/Header.svelte"
 
     let email = info.email
     let interests = info.interests
 </script>
 
+<Header/>
 <main>
-    <h1><a href="/">Moonflower</a></h1>
-    <section class="section">
-        <h2>socials</h2>
-        <SocialIcons iconInfos={iconInfos}></SocialIcons>
-    </section>
-
     <section class="section">
         <h2>about</h2>
         <p>I am a student that loves</p>
@@ -31,11 +25,7 @@
     main {
         max-width: 600px;
         margin: 0 auto;
-        padding: 0 1rem;
-    }
-
-    h1 {
-      text-align: center;
+        padding: 1rem;
     }
 
     ul {

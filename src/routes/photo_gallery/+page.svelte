@@ -1,5 +1,6 @@
 <script>
     import Gallery from "$lib/Gallery.svelte"
+    import Header from "$lib/Header.svelte"
 
     const imageFiles = import.meta.glob('/static/collage_images/*.jpeg', { eager: true });
     const numberOfImages = Object.keys(imageFiles).length;
@@ -8,8 +9,8 @@
     const imagePaths = Object.keys(imageFiles).map(path => path.replace('/static', ''));
 </script>
 
+<Header/>
 <main>
-    <h1><a href="/">Moonflower</a></h1>
     <Gallery 
   images={imagePaths} 
   gap={10} 
@@ -19,7 +20,4 @@
 </main>
 
 <style>
-    h1 {
-      text-align: center;
-    }
 </style>

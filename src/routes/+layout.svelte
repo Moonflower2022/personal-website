@@ -24,21 +24,20 @@
 </svelte:head>
 
   <style>
-
     /* Global styles (dark theme) */
-    :global(body) {
+    :global(body, html) {
       background-color: #000;
       color: #fff;
       margin: 0;
       padding: 0;
+      font-family: "Space Mono", monospace;
     }
   
     :global(a) {
       color: #4da6ff;
     }
-  
-    :global(main) {
-      font-family: "Space Mono", monospace;
-      color: #fff;
+
+    :global(h1) {
+      text-align: left;
     }
   </style>
