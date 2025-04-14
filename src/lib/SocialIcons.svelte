@@ -1,11 +1,15 @@
 <script>
-    export let size = "fa-2x";
-    export let iconInfos;
+    export let size = "fa-2x"
+    export let iconInfos
 </script>
 
 <div class="social-icons">
     {#each iconInfos as iconInfo}
-        <a href={iconInfo.href} target="_blank" aria-label={iconInfo.description}>
+        <a
+            href={iconInfo.href}
+            target="_blank"
+            aria-label={iconInfo.description}
+        >
             <i
                 class="fa {iconInfo.font_awesome_tag} {size} icon-3d"
                 role="presentation"

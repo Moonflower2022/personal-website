@@ -2,90 +2,90 @@
     // ##########################
     // CREDIT: Claude 3.7, ChatGPT, and https://github.com/BerkinAKKAYA/svelte-image-gallery
     // ##########################
-    import { onMount, createEventDispatcher } from "svelte";
+    import { onMount, createEventDispatcher } from "svelte"
 
     /**
      * @type {string[]} - Array of image paths
      */
-    export let images = [];
+    export let images = []
 
     /**
      * @type {number}
      */
-    export let gap = 10;
+    export let gap = 10
 
     /**
      * @type {number}
      */
-    export let maxColumnWidth = 250;
+    export let maxColumnWidth = 250
 
     /**
      * @type {boolean}
      */
-    export let hover = false;
+    export let hover = false
 
     /**
      * @type {'eager' | 'lazy'}
      */
-    export let loading = 'lazy';
+    export let loading = "lazy"
 
-    const dispatch = createEventDispatcher();
-
-    /**
-     * @type {number}
-     */
-    let galleryWidth = 0;
+    const dispatch = createEventDispatcher()
 
     /**
      * @type {number}
      */
-    let columnCount = 0;
+    let galleryWidth = 0
+
+    /**
+     * @type {number}
+     */
+    let columnCount = 0
 
     /**
      * @type {string[][]}
      */
-    let columns = [];
+    let columns = []
 
-    let clickedImages = new Set();
+    let clickedImages = new Set()
 
     function handleClick(path) {
         if (clickedImages.has(path)) {
-            clickedImages.delete(path);
+            clickedImages.delete(path)
         } else {
-            clickedImages.add(path);
+            clickedImages.add(path)
         }
-        clickedImages = new Set(clickedImages);
-        dispatch("click", { path });
+        clickedImages = new Set(clickedImages)
+        dispatch("click", { path })
     }
 
     // Calculate column count based on gallery width and max column width
-    $: columnCount = Math.max(1, Math.floor(galleryWidth / maxColumnWidth));
-    
+    $: columnCount = Math.max(1, Math.floor(galleryWidth / maxColumnWidth))
+
     // Re-organize images when column count changes or images array changes
     $: if (columnCount && images.length) {
-        organizeImagesIntoColumns();
+        organizeImagesIntoColumns()
     }
-    
-    $: galleryStyle = `grid-template-columns: repeat(${columnCount}, 1fr); --gap: ${gap}px`;
+
+    $: galleryStyle = `grid-template-columns: repeat(${columnCount}, 1fr); --gap: ${gap}px`
 
     onMount(() => {
         if (images.length) {
-            organizeImagesIntoColumns();
+            organizeImagesIntoColumns()
         }
-    });
+    })
 
     function organizeImagesIntoColumns() {
-        columns = [];
+        columns = []
 
         // Initialize the column arrays
         for (let i = 0; i < columnCount; i++) {
-            columns[i] = [];
+            columns[i] = []
         }
 
         // Fill the columns with image paths
         for (let i = 0; i < images.length; i++) {
-            const idx = i % columnCount;
-            columns[idx].push(images[i]);
+            const idx = i % columnCount
+            columns[idx].push(images[i])
         }
     }
 </script>
@@ -94,17 +94,18 @@
     {#each columns as column, columnIndex}
         <div class="column">
             {#each column as imagePath}
-                <button 
+                <button
                     on:click={() => handleClick(imagePath)}
                     class="image-wrapper-button"
-                    aria-label="enlarge image">
+                    aria-label="enlarge image"
+                >
                     <img
-                    src={imagePath}
-                    alt=""
-                    class={`${hover ? "img-hover" : ""} ${clickedImages.has(imagePath) ? "clicked" : ""} 
-                            ${clickedImages.has(imagePath) && columnIndex === 0 ? "right-shift" : ""}
-                            ${clickedImages.has(imagePath) && columnIndex === columnCount - 1 ? "left-shift" : ""}`}
-                    loading={loading}
+                        src={imagePath}
+                        alt=""
+                        class={`${hover ? "img-hover" : ""} ${clickedImages.has(imagePath) ? "clicked" : ""} 
+                                ${clickedImages.has(imagePath) && columnIndex === 0 ? "right-shift" : ""}
+                                ${clickedImages.has(imagePath) && columnIndex === columnCount - 1 ? "left-shift" : ""}`}
+                        {loading}
                     />
                 </button>
             {/each}

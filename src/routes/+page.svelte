@@ -6,7 +6,7 @@
     let interests = info.interests
 </script>
 
-<Header/>
+<Header />
 <main>
     <section class="section">
         <h2>about</h2>
@@ -29,15 +29,15 @@
     }
 
     ul {
-      margin-top: 0px;
-      padding-left: 25px;
+        margin-top: 0px;
+        padding-left: 25px;
     }
-  
+
     p ~ ul {
-      margin-top: -10px;
+        margin-top: -10px;
     }
 
     .section {
-      margin-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
     }
 </style>

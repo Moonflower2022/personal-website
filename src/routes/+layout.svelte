@@ -1,10 +1,10 @@
 <script>
     // Any layout logic
-  </script>
-  
-  <slot />
-  
-  <svelte:head>
+</script>
+
+<slot />
+
+<svelte:head>
     <!-- import two different versions of font awesome so all the icons work -->
     <link
         rel="stylesheet"
@@ -23,21 +23,21 @@
     />
 </svelte:head>
 
-  <style>
+<style>
     /* Global styles (dark theme) */
     :global(body, html) {
-      background-color: #000;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-      font-family: "Space Mono", monospace;
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        font-family: "Space Mono", monospace;
     }
-  
+
     :global(a) {
-      color: #4da6ff;
+        color: #4da6ff;
     }
 
     :global(h1) {
-      text-align: left;
+        text-align: left;
     }
-  </style>
+</style>

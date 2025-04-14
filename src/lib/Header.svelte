@@ -5,8 +5,8 @@
 
 <header>
     <h1><a href="/">Moonflower</a></h1>
-    <SocialIcons iconInfos={iconInfos} size="fa-2x"></SocialIcons>
-  </header>
+    <SocialIcons {iconInfos} size="fa-2x"></SocialIcons>
+</header>
 
 <style>
     header {
