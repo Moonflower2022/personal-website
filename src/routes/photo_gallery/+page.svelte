@@ -1,12 +1,16 @@
 <script>
     import Gallery from "$lib/Gallery.svelte"
     import Header from "$lib/Header.svelte"
+    import { onMount } from "svelte";
+    let imagePaths;
 
-    const imageFiles = import.meta.glob('/static/collage_images/*.jpeg', { eager: true });
-    const numberOfImages = Object.keys(imageFiles).length;
+    onMount(async () => {
+      const imageFiles = import.meta.glob('$lib/collage_images/*.jpeg', { eager: true });
+       imagePaths = Object.keys(imageFiles)
+    });
+
+
     
-    // Get array of image paths
-    const imagePaths = Object.keys(imageFiles).map(path => path.replace('/static', ''));
 </script>
 
 <Header/>
