@@ -1,6 +1,6 @@
 <script>
     // ##########################
-    // CREDIT: Claude 3.7 and https://github.com/BerkinAKKAYA/svelte-image-gallery
+    // CREDIT: Claude 3.7, ChatGPT, and https://github.com/BerkinAKKAYA/svelte-image-gallery
     // ##########################
     import { onMount, createEventDispatcher } from "svelte";
 
@@ -46,6 +46,18 @@
      */
     let columns = [];
 
+    let clickedImages = new Set();
+
+    function handleClick(path) {
+        if (clickedImages.has(path)) {
+            clickedImages.delete(path);
+        } else {
+            clickedImages.add(path);
+        }
+        clickedImages = new Set(clickedImages);
+        dispatch("click", { path });
+    }
+
     // Calculate column count based on gallery width and max column width
     $: columnCount = Math.max(1, Math.floor(galleryWidth / maxColumnWidth));
     
@@ -76,24 +88,25 @@
             columns[idx].push(images[i]);
         }
     }
-    
-    function handleClick(path) {
-        dispatch("click", { path });
-    }
 </script>
 
 <div id="gallery" bind:clientWidth={galleryWidth} style={galleryStyle}>
-    {#each columns as column}
+    {#each columns as column, columnIndex}
         <div class="column">
             {#each column as imagePath}
-                <img
+                <button 
+                    on:click={() => handleClick(imagePath)}
+                    class="image-wrapper-button"
+                    aria-label="enlarge image">
+                    <img
                     src={imagePath}
                     alt=""
-                    on:click={() => handleClick(imagePath)}
-                    on:keydown={() => handleClick(imagePath)}
-                    class={hover ? "img-hover" : ""}
+                    class={`${hover ? "img-hover" : ""} ${clickedImages.has(imagePath) ? "clicked" : ""} 
+                            ${clickedImages.has(imagePath) && columnIndex === 0 ? "right-shift" : ""}
+                            ${clickedImages.has(imagePath) && columnIndex === columnCount - 1 ? "left-shift" : ""}`}
                     loading={loading}
-                />
+                    />
+                </button>
             {/each}
         </div>
     {/each}
@@ -101,9 +114,10 @@
 
 <style>
     #gallery {
-        width: 100%;
+        width: calc(100% - 20px);
         display: grid;
         gap: var(--gap);
+        margin: 0 10px 0;
     }
     #gallery .column {
         display: flex;
@@ -118,10 +132,48 @@
     }
     .img-hover {
         opacity: 0.9;
-        transition: all 0.2s;
+        transition: all 0.5s;
     }
     .img-hover:hover {
         opacity: 1;
         transform: scale(1.05);
+    }
+
+    .clicked.img-hover:hover {
+        transform: scale(2);
+    }
+
+    .clicked.right-shift.img-hover:hover {
+        transform: scale(2) translateX(25%);
+    }
+
+    .clicked.left-shift.img-hover:hover {
+        transform: scale(2) translateX(-25%);
+    }
+
+    /* i love monkey patching */
+    .image-wrapper-button:has(.clicked.img-hover:hover) {
+        z-index: 1000;
+    }
+
+    .image-wrapper-button:has(.clicked.right-shift.img-hover:hover) {
+        z-index: 1000;
+    }
+
+    .image-wrapper-button:has(.clicked.left-shift.img-hover:hover) {
+        z-index: 1000;
+    }
+
+    .image-wrapper-button {
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+        display: inline-block;
+        line-height: 0; /* Removes extra space under image */
+        outline: none; /* Remove focus outline - add custom focus style for accessibility */
     }
 </style>
