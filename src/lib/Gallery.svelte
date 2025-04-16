@@ -150,7 +150,7 @@
         <div class="column">
             {#each column as imagePath}
                 <button
-                    on:click={(event) => handleClick(imagePath, event)}
+                    on:click={(event) => { if (columnCount !== 1) handleClick(imagePath, event)}}
                     on:mouseenter={(event) => handleMouseEnter(imagePath, event)}
                     on:mouseleave={(event) => handleMouseLeave(imagePath, event)}
                     class="image-wrapper-button"
