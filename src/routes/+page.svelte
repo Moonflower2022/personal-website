@@ -1,13 +1,15 @@
 <script>
     import info from "$lib/info.json"
     import Header from "$lib/Header.svelte"
+    import StarBackground from "$lib/StarBackground.svelte"
 
     let email = info.email
     let interests = info.interests
 </script>
 
-<Header />
-<main>
+<StarBackground>
+    <Header />
+    <main>
     <section class="section">
         <h2>about</h2>
         <p>I am a student that loves</p>
@@ -20,6 +22,7 @@
     <h2><a href="resume.pdf" target="_blank">resume</a></h2>
     <h2><a href="/photo_gallery">photos</a></h2>
 </main>
+</StarBackground>
 
 <style>
     main {
