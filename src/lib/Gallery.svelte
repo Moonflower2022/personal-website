@@ -115,10 +115,10 @@
 
 <style>
     #gallery {
-        width: calc(100% - 20px);
+        width: calc(100% - 2 * var(--gap));
         display: grid;
         gap: var(--gap);
-        margin: 0 10px 0;
+        margin: 0 var(--gap) 0;
     }
     #gallery .column {
         display: flex;
@@ -154,14 +154,6 @@
 
     /* i love monkey patching */
     .image-wrapper-button:has(.clicked.img-hover:hover) {
-        z-index: 1000;
-    }
-
-    .image-wrapper-button:has(.clicked.right-shift.img-hover:hover) {
-        z-index: 1000;
-    }
-
-    .image-wrapper-button:has(.clicked.left-shift.img-hover:hover) {
         z-index: 1000;
     }
 
