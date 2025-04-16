@@ -27,7 +27,7 @@
     /**
      * @type {'eager' | 'lazy'}
      */
-    export let loading = "lazy"
+    export let loading = "eager"
 
     const dispatch = createEventDispatcher()
 
@@ -46,103 +46,47 @@
      */
     let columns = []
 
+    /**
+     * @type {Set<string>}
+     */
     let clickedImages = new Set()
-    let zIndexTimeouts = {}
-    let buttonRefs = {} // Store references to buttons
 
     function handleClick(path, event) {
-        const button = event.currentTarget;
-        buttonRefs[path] = button; // Store reference to the button
-        
-        // Always clear any existing timeout for this image
-        if (zIndexTimeouts[path]) {
-            clearTimeout(zIndexTimeouts[path]);
-            zIndexTimeouts[path] = null;
-        }
-        
+        // Toggle clicked state without recreating the entire Set
         if (clickedImages.has(path)) {
-            // Image is being unclicked
-            clickedImages.delete(path)
-            
-            // Set timeout to remove z-index after 0.5s
-            zIndexTimeouts[path] = setTimeout(() => {
-                // Check if button reference still exists
-                if (buttonRefs[path]) {
-                    buttonRefs[path].style.zIndex = '';
-                }
-                zIndexTimeouts[path] = null;
-            }, 500);
+            clickedImages.delete(path);
         } else {
-            // Image is being clicked
-            clickedImages.add(path)
-            
-            // Apply high z-index immediately
-            button.style.zIndex = '1000';
+            clickedImages.add(path);
         }
+        clickedImages = clickedImages;
         
-        clickedImages = new Set(clickedImages)
-        dispatch("click", { path })
-    }
-
-    function handleMouseEnter(path, event) {
-        const button = event.currentTarget
-        if (clickedImages.has(path)) {
-
-            button.style.zIndex = '1000';
-        }
-
-        if (zIndexTimeouts[path]) {
-            clearTimeout(zIndexTimeouts[path]);
-            zIndexTimeouts[path] = null;
-        }
-
+        // Dispatch event with path
+        dispatch("click", { path });
     }
 
     function handleMouseLeave(path, event) {
-        const button = event.currentTarget
-        zIndexTimeouts[path] = setTimeout(() => {
-  // your code here
-  button.style.zIndex = '';
-}, 500);
+        if (clickedImages.has(path)) {
+            clickedImages.delete(path)
+        }
+        clickedImages = clickedImages;
     }
 
     // Calculate column count based on gallery width and max column width
-    $: columnCount = Math.max(1, Math.floor(galleryWidth / maxColumnWidth))
+    $: columnCount = Math.max(1, Math.floor(galleryWidth / maxColumnWidth));
 
-    // Re-organize images when column count changes or images array changes
-    $: if (columnCount && images.length) {
-        organizeImagesIntoColumns()
+    // Only reorganize columns when necessary
+    $: if (columnCount > 0 && images.length > 0) {
+        // Create new columns only when count changes
+        columns = Array.from({ length: columnCount }, () => []);
+        
+        // Fill columns with even distribution
+        images.forEach((img, i) => {
+            const columnIndex = i % columnCount;
+            columns[columnIndex].push(img);
+        });
     }
 
-    $: galleryStyle = `grid-template-columns: repeat(${columnCount}, 1fr); --gap: ${gap}px`
-
-    onMount(() => {
-        if (images.length) {
-            organizeImagesIntoColumns()
-        }
-
-        // Clean up any remaining timeouts on component destroy
-        return () => {
-            Object.values(zIndexTimeouts).forEach(timeout => {
-                if (timeout) clearTimeout(timeout);
-            });
-        };
-    })
-
-    function organizeImagesIntoColumns() {
-        columns = []
-
-        // Initialize the column arrays
-        for (let i = 0; i < columnCount; i++) {
-            columns[i] = []
-        }
-
-        // Fill the columns with image paths
-        for (let i = 0; i < images.length; i++) {
-            const idx = i % columnCount
-            columns[idx].push(images[i])
-        }
-    }
+    $: galleryStyle = `grid-template-columns: repeat(${columnCount}, 1fr); --gap: ${gap}px`;
 </script>
 
 <div id="gallery" bind:clientWidth={galleryWidth} style={galleryStyle}>
@@ -151,17 +95,19 @@
             {#each column as imagePath}
                 <button
                     on:click={(event) => { if (columnCount !== 1) handleClick(imagePath, event)}}
-                    on:mouseenter={(event) => handleMouseEnter(imagePath, event)}
                     on:mouseleave={(event) => handleMouseLeave(imagePath, event)}
                     class="image-wrapper-button"
                     aria-label="enlarge image"
+                    class:active={clickedImages.has(imagePath)}
+                    data-column-position={columnIndex === 0 ? "first" : columnIndex === columnCount - 1 ? "last" : "middle"}
                 >
                     <img
                         src={imagePath}
                         alt=""
-                        class={`${hover ? "img-hover" : ""} ${clickedImages.has(imagePath) ? "clicked" : ""} 
-                                ${clickedImages.has(imagePath) && columnIndex === 0 ? "right-shift" : ""}
-                                ${clickedImages.has(imagePath) && columnIndex === columnCount - 1 ? "left-shift" : ""}`}
+                        class:img-hover={hover}
+                        class:clicked={clickedImages.has(imagePath)}
+                        class:right-shift={clickedImages.has(imagePath) && columnIndex === 0}
+                        class:left-shift={clickedImages.has(imagePath) && columnIndex === columnCount - 1}
                         {loading}
                     />
                 </button>
@@ -188,27 +134,7 @@
     #gallery .column *:nth-child(1) {
         margin-top: 0;
     }
-    .img-hover {
-        opacity: 0.9;
-        transition: all 0.5s;
-    }
-    .img-hover:hover {
-        opacity: 1;
-        transform: scale(1.05);
-    }
-
-    .clicked.img-hover:hover {
-        transform: scale(2);
-    }
-
-    .clicked.right-shift.img-hover:hover {
-        transform: scale(2) translateX(25%);
-    }
-
-    .clicked.left-shift.img-hover:hover {
-        transform: scale(2) translateX(-25%);
-    }
-
+    
     .image-wrapper-button {
         background: none;
         border: none;
@@ -218,8 +144,41 @@
         color: inherit;
         cursor: pointer;
         display: inline-block;
-        line-height: 0; /* Removes extra space under image */
-        outline: none; /* Remove focus outline - add custom focus style for accessibility */
-        position: relative; /* Needed for z-index to work properly */
+        line-height: 0;
+        outline: none;
+        position: relative;
+        z-index: 1; /* Default z-index */
+        transition: z-index 0s 0.5s; /* Delay z-index change until after animation */
+    }
+    
+    /* Use class-based z-index instead of direct style manipulation */
+    .image-wrapper-button.active {
+        z-index: 1000;
+        transition: z-index 0s 0s; /* Apply z-index immediately when active */
+    }
+    
+    /* Image hover effects */
+    .img-hover {
+        opacity: 0.9;
+        transition: all 0.5s;
+        will-change: transform, opacity; /* Hint browser for optimization */
+    }
+    
+    .img-hover:hover {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    
+    /* Clicked state animations - hardware accelerated */
+    .clicked.img-hover:hover {
+        transform: scale(2);
+    }
+    
+    .clicked.right-shift.img-hover:hover {
+        transform: scale(2) translateX(25%);
+    }
+    
+    .clicked.left-shift.img-hover:hover {
+        transform: scale(2) translateX(-25%);
     }
 </style>
