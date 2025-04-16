@@ -47,15 +47,63 @@
     let columns = []
 
     let clickedImages = new Set()
+    let zIndexTimeouts = {}
+    let buttonRefs = {} // Store references to buttons
 
-    function handleClick(path) {
-        if (clickedImages.has(path)) {
-            clickedImages.delete(path)
-        } else {
-            clickedImages.add(path)
+    function handleClick(path, event) {
+        const button = event.currentTarget;
+        buttonRefs[path] = button; // Store reference to the button
+        
+        // Always clear any existing timeout for this image
+        if (zIndexTimeouts[path]) {
+            clearTimeout(zIndexTimeouts[path]);
+            zIndexTimeouts[path] = null;
         }
+        
+        if (clickedImages.has(path)) {
+            // Image is being unclicked
+            clickedImages.delete(path)
+            
+            // Set timeout to remove z-index after 0.5s
+            zIndexTimeouts[path] = setTimeout(() => {
+                // Check if button reference still exists
+                if (buttonRefs[path]) {
+                    buttonRefs[path].style.zIndex = '';
+                }
+                zIndexTimeouts[path] = null;
+            }, 500);
+        } else {
+            // Image is being clicked
+            clickedImages.add(path)
+            
+            // Apply high z-index immediately
+            button.style.zIndex = '1000';
+        }
+        
         clickedImages = new Set(clickedImages)
         dispatch("click", { path })
+    }
+
+    function handleMouseEnter(path, event) {
+        const button = event.currentTarget
+        if (clickedImages.has(path)) {
+
+            button.style.zIndex = '1000';
+        }
+
+        if (zIndexTimeouts[path]) {
+            clearTimeout(zIndexTimeouts[path]);
+            zIndexTimeouts[path] = null;
+        }
+
+    }
+
+    function handleMouseLeave(path, event) {
+        const button = event.currentTarget
+        zIndexTimeouts[path] = setTimeout(() => {
+  // your code here
+  button.style.zIndex = '';
+}, 500);
     }
 
     // Calculate column count based on gallery width and max column width
@@ -72,6 +120,13 @@
         if (images.length) {
             organizeImagesIntoColumns()
         }
+
+        // Clean up any remaining timeouts on component destroy
+        return () => {
+            Object.values(zIndexTimeouts).forEach(timeout => {
+                if (timeout) clearTimeout(timeout);
+            });
+        };
     })
 
     function organizeImagesIntoColumns() {
@@ -95,7 +150,9 @@
         <div class="column">
             {#each column as imagePath}
                 <button
-                    on:click={() => handleClick(imagePath)}
+                    on:click={(event) => handleClick(imagePath, event)}
+                    on:mouseenter={(event) => handleMouseEnter(imagePath, event)}
+                    on:mouseleave={(event) => handleMouseLeave(imagePath, event)}
                     class="image-wrapper-button"
                     aria-label="enlarge image"
                 >
@@ -152,11 +209,6 @@
         transform: scale(2) translateX(-25%);
     }
 
-    /* i love monkey patching */
-    .image-wrapper-button:has(.clicked.img-hover:hover) {
-        z-index: 1000;
-    }
-
     .image-wrapper-button {
         background: none;
         border: none;
@@ -168,5 +220,6 @@
         display: inline-block;
         line-height: 0; /* Removes extra space under image */
         outline: none; /* Remove focus outline - add custom focus style for accessibility */
+        position: relative; /* Needed for z-index to work properly */
     }
 </style>
