@@ -31,6 +31,9 @@
         margin: 0;
         padding: 0;
         font-family: "Space Mono", monospace;
+    }
+
+    :global(html) {
         scrollbar-gutter: stable;
     }
 
