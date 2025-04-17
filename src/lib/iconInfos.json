@@ -1,26 +1,26 @@
 [
     {
-        "font_awesome_tag": "fa-envelope",
+        "font_awesome_tag": "fa fa-envelope",
         "href": "mailto:dumbderivatives@gmail.com",
         "description": "email link"
     },
     {
-        "font_awesome_tag": "fa-youtube",
+        "font_awesome_tag": "fa-brands fa-youtube",
         "href": "https://www.youtube.com/@DumbDerivatives",
         "description": "youtube link"
     },
     {
-        "font_awesome_tag": "fa-github",
+        "font_awesome_tag": "fa fa-github",
         "href": "https://github.com/Moonflower2022",
         "description": "github link"
     },
     {
-        "font_awesome_tag": "fa-spotify",
+        "font_awesome_tag": "fa fa-spotify",
         "href": "https://open.spotify.com/user/31u2cwuyeyr56ntpdz4kdbnewhqe",
         "description": "spotify link"
     },
     {
-        "font_awesome_tag": "fa-chess-pawn",
+        "font_awesome_tag": "fa fa-chess-pawn",
         "href": "https://www.chess.com/member/moonflower2022",
         "description": "chess link"
     }

@@ -11,23 +11,7 @@
 <style>
     header {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        padding: 1rem;
-        gap: 1rem;
-    }
-    
-    h1 {
-        margin-left: 30px;
-    }
-
-
-    @media (max-width: 600px) {
-        header {
-            flex-direction: column;
-        }
-
-        h1 {
-            margin-left: 0px;
-        }
     }
 </style>

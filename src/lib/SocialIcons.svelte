@@ -11,7 +11,7 @@
             aria-label={iconInfo.description}
         >
             <i
-                class="fa {iconInfo.font_awesome_tag} {size} icon-3d"
+                class="{iconInfo.font_awesome_tag} {size} icon-3d"
                 role="presentation"
             ></i>
         </a>
