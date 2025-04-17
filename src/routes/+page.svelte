@@ -66,8 +66,7 @@
     
     .left-column {
         flex: 1;
-        max-width: 500px;
-        padding: 1rem;
+        padding-left: 6rem;
         z-index: 10;
     }
     
