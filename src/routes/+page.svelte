@@ -60,14 +60,13 @@
 <style>
     .two-column-layout {
         display: flex;
-        width: 100%;
-        position: relative;
+        width: 85%;
+        margin: auto;
     }
     
     .left-column {
         flex: 1;
-        padding-left: 6rem;
-        z-index: 10;
+        padding-left: 3rem;
     }
     
     .right-column {

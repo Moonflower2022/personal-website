@@ -33,7 +33,7 @@
         font-family: "Space Mono", monospace;
         width: 100vw;
     }
-
+    
     :global(a) {
         color: #4da6ff;
     }
