@@ -51,7 +51,6 @@
         color: inherit;
         cursor: pointer;
         display: inline-block;
-        line-height: 0;
         outline: none;
         position: relative;
         z-index: 1;
