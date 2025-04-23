@@ -3,6 +3,7 @@
     // CREDIT: Claude 3.7, ChatGPT, and https://github.com/BerkinAKKAYA/svelte-image-gallery
     // ##########################
     import { onMount, createEventDispatcher } from "svelte"
+    import WrapperButton from "./WrapperButton.svelte";
 
     /**
      * @type {string[]} - Array of image paths
@@ -96,7 +97,7 @@
                 <button
                     on:click={(event) => { if (columnCount !== 1) handleClick(imagePath, event)}}
                     on:mouseleave={(event) => handleMouseLeave(imagePath, event)}
-                    class="image-wrapper-button"
+                    class="blank-wrapper-button"
                     aria-label="enlarge image"
                     class:active={clickedImages.has(imagePath)}
                     data-column-position={columnIndex === 0 ? "first" : columnIndex === columnCount - 1 ? "last" : "middle"}
@@ -135,24 +136,7 @@
         margin-top: 0;
     }
     
-    .image-wrapper-button {
-        background: none;
-        border: none;
-        padding: 0;
-        margin: 0;
-        font: inherit;
-        color: inherit;
-        cursor: pointer;
-        display: inline-block;
-        line-height: 0;
-        outline: none;
-        position: relative;
-        z-index: 1; /* Default z-index */
-        transition: z-index 0s 0.5s; /* Delay z-index change until after animation */
-    }
-    
-    /* Use class-based z-index instead of direct style manipulation */
-    .image-wrapper-button.active {
+    .blank-wrapper-button.active {
         z-index: 1000;
         transition: z-index 0s 0s; /* Apply z-index immediately when active */
     }

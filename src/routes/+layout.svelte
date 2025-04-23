@@ -41,4 +41,20 @@
     :global(h1) {
         text-align: left;
     }
+
+    :global(.blank-wrapper-button) {
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+        display: inline-block;
+        line-height: 0;
+        outline: none;
+        position: relative;
+        z-index: 1;
+        transition: z-index 0s 0.5s; /* Delay z-index change until after animation */
+    }
 </style>

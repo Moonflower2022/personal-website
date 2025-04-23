@@ -5,7 +5,7 @@
 
     import { onMount } from "svelte"
 
-    let n = 20
+    let n = 19
     let imagePaths = []
 
     for (let i = 1; i <= n; i++) {

@@ -1,0 +1,45 @@
+{
+  "chess": {
+    "media": [
+      "/interests_images/chess/chess.jpeg",
+      "/interests_images/chess/chess1.png"
+    ],
+    "index": 0
+  },
+  "math": {
+    "media": [
+      "/interests_images/math/math.jpeg",
+      "/interests_images/math/math1.png"
+    ],
+    "index": 0
+  },
+  "music": {
+    "media": [
+      "/interests_images/music/music.jpeg",
+      "/interests_images/music/music2.gif"
+    ],
+    "index": 0
+  },
+  "programming": {
+    "media": [
+      "/interests_images/programming/programming.jpeg",
+      "/interests_images/programming/programming1.png",
+      "/interests_images/programming/programming2.png"
+    ],
+    "index": 0
+  },
+  "tennis": {
+    "media": [
+      "/interests_images/tennis/tennis.gif",
+      "/interests_images/tennis/tennis2.gif"
+    ],
+    "index": 0
+  },
+  "ultimate frisbee": {
+    "media": [
+      "/interests_images/ultimate frisbee/ultimate frisbee.jpg",
+      "/interests_images/ultimate frisbee/ultimate frisbee1.JPG"
+    ],
+    "index": 0
+  }
+}

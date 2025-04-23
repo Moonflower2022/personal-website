@@ -3,6 +3,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
+		"generate:interests:info": "node scripts/generateInterestsInfo.js",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview"

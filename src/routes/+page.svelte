@@ -1,23 +1,21 @@
 <script>
     import info from "$lib/info.json";
+    import interestsInfo from "$lib/interestsInfo.json";
     import Header from "$lib/Header.svelte";
     import StarBackground from "$lib/StarBackground.svelte";
 
     let email = info.email;
-    let interests = info.interests;
     
     let hoveredInterest = null;
 
-    function setHoveredInterest(interest) {
+    function handleHover(interest) {
         hoveredInterest = interest;
+        interestsInfo[interest].index = (interestsInfo[interest].index + 1) % interestsInfo[interest].media.length
     }
-    
-    const interestImages = {
-    };
-    
-    interests.forEach(interest => {
-        interestImages[interest.toLowerCase()] = `/interests_images/${interest.toLowerCase()}.jpeg`;
-    });
+
+    function handleClick(interest) {
+        interestsInfo[interest].index = (interestsInfo[interest].index + 1) % interestsInfo[interest].media.length
+    }
 </script>
 
 <StarBackground>
@@ -28,13 +26,18 @@
                 <h2>about</h2>
                 <p>I am a student that loves</p>
                 <ul>
-                    {#each interests as interest}
-                        <li 
-                            class="hover-item"
-                            on:mouseenter={() => setHoveredInterest(interest)}
+                    {#each Object.entries(interestsInfo) as [interest, info]}
+                    <li 
+                        class="hover-item"
+                        on:mouseenter={() => handleHover(interest)}
+                    >
+                        <button
+                            class="blank-wrapper-button"
+                            on:click={() => handleClick(interest)}
                         >
                             {interest}
-                        </li>
+                        </button>
+                    </li>
                     {/each}
                 </ul>
             </section>
@@ -44,10 +47,10 @@
         
         <div class="right-column">
             <div class="image-container">
-                {#each interests as interest}
+                {#each Object.entries(interestsInfo) as [interest, info]}
                     <img 
-                        src={interestImages[interest.toLowerCase()] || `/api/placeholder/400/300`} 
-                        alt={interest}
+                        src={info.media[info.index] || `/api/placeholder/400/300`} 
+                        alt="{interest} media"
                         class="hover-image"
                         class:visible={hoveredInterest === interest}
                     />
