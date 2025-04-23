@@ -3,7 +3,6 @@
     // CREDIT: Claude 3.7, ChatGPT, and https://github.com/BerkinAKKAYA/svelte-image-gallery
     // ##########################
     import { onMount, createEventDispatcher } from "svelte"
-    import WrapperButton from "./WrapperButton.svelte";
 
     /**
      * @type {string[]} - Array of image paths
