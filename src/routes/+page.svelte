@@ -1,10 +1,7 @@
 <script>
-    import info from "$lib/info.json";
     import interestsInfo from "$lib/interestsInfo.json";
     import Header from "$lib/Header.svelte";
     import StarBackground from "$lib/StarBackground.svelte";
-
-    let email = info.email;
     
     let hoveredInterest = null;
 
@@ -43,6 +40,7 @@
             </section>
             <h2><a href="resume.pdf" target="_blank">resume</a></h2>
             <h2><a href="/photo_gallery">photos</a></h2>
+            <h2><a href="/app_reviews">app reviews</a></h2>
         </div>
         
         <div class="right-column">

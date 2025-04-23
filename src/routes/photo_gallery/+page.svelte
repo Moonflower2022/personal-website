@@ -3,8 +3,6 @@
     import Header from "$lib/Header.svelte"
     import StarBackground from "$lib/StarBackground.svelte"
 
-    import { onMount } from "svelte"
-
     let n = 19
     let imagePaths = []
 
