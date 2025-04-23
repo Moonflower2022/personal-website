@@ -32,7 +32,7 @@
                         on:mouseenter={() => handleHover(interest)}
                     >
                         <button
-                            class="blank-wrapper-button"
+                            class="text-wrapper-button"
                             on:click={() => handleClick(interest)}
                         >
                             {interest}

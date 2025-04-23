@@ -96,7 +96,7 @@
                 <button
                     on:click={(event) => { if (columnCount !== 1) handleClick(imagePath, event)}}
                     on:mouseleave={(event) => handleMouseLeave(imagePath, event)}
-                    class="blank-wrapper-button"
+                    class="photo-wrapper-button"
                     aria-label="enlarge image"
                     class:active={clickedImages.has(imagePath)}
                     data-column-position={columnIndex === 0 ? "first" : columnIndex === columnCount - 1 ? "last" : "middle"}
