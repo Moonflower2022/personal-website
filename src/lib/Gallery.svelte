@@ -135,7 +135,7 @@
         margin-top: 0;
     }
     
-    .blank-wrapper-button.active {
+    .photo-wrapper-button.active {
         z-index: 1000;
         transition: z-index 0s 0s; /* Apply z-index immediately when active */
     }
