@@ -88,8 +88,8 @@
     }
     
     .hover-image {
-        max-width: 80%;
-        max-height: 80%;
+        max-width: 95%;
+        max-height: 95%;
         border-radius: 8px;
         opacity: 0;
         position: absolute;
