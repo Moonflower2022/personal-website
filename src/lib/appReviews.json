@@ -34,5 +34,11 @@
         "outsideLink": "🔥",
         "url": "https://karabiner-elements.pqrs.org",
         "review": "super customizable macos keyboard shortcut system that is super easy to use (ai is great at writing the scripts)"
+    },
+    {
+        "text": "rectangle",
+        "outsideLink": "▬▬",
+        "url": "https://rectangleapp.com/",
+        "review": "great basic window manager (all i know is full screen, split left, and split right and that covers 99% of my use cases)"
     }
 ]
