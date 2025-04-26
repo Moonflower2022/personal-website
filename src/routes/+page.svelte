@@ -37,6 +37,7 @@
                     </li>
                     {/each}
                 </ul>
+                <p>please let me know at my email if anything is broken / looks weird!</p>
             </section>
             <h2><a href="resume.pdf" target="_blank">resume</a></h2>
             <h2><a href="/photo_gallery">photos</a></h2>
