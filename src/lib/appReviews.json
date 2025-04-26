@@ -1,0 +1,38 @@
+[
+    {
+        "text": "vscode",
+        "outsideLink": "🤩",
+        "url": "https://code.visualstudio.com/",
+        "review": "might not be as techy as neovim or emacs but still a phenomenal ide that is exceptionally intuitive and thorough"
+    },
+    {
+        "text": "arc",
+        "outsideLink": "🥵",
+        "url": "https://arc.net",
+        "review": "still new but already has tons of great features like easy split screen manipulation, in-depth customization, integration with websites like gmail and google calendar, spaces, and arc max"
+    },
+    {
+        "text": "obsidian",
+        "outsideLink": "🗿",
+        "url": "https://obsidian.md/",
+        "review": "a great note taking system and great for learning markdown (WONDERFUL COMMUNITY PLUGINS LIKE LATEX SUITE)"
+    },
+    {
+        "text": "spotify",
+        "outsideLink": "😎",
+        "url": "https://www.spotify.com/",
+        "review": "super chill music app"
+    },
+    {
+        "text": "iterm",
+        "outsideLink": "😍",
+        "url": "https://iterm2.com/",
+        "review": "super customizable terminal app (best feature: cmd-d and cmd-shift-d to make split panels)"
+    },
+    {
+        "text": "karabiner-elements",
+        "outsideLink": "🔥",
+        "url": "https://karabiner-elements.pqrs.org",
+        "review": "super customizable macos keyboard shortcut system that is super easy to use (ai is great at writing the scripts)"
+    }
+]

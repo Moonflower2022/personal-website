@@ -1,6 +1,7 @@
 <script>
     import Header from "$lib/Header.svelte"
     import StarBackground from "$lib/StarBackground.svelte"
+    import appReviews from "$lib/appReviews.json"
 </script>
 
 <StarBackground>
@@ -12,10 +13,10 @@
             <h2>app reviews</h2>
             <p>this is a list of some apps that I use or have used, and my thhoughts on them </p>
         </section>
-        <h3><a href="https://code.visualstudio.com/" target="_blank">vscode</a> 🤩</h3>
-        <p>might not be as techy as neovim or emacs but still a phenomenal ide that is exceptionally intuitive and thorough </p>
-        <h3><a href="https://arc.net" target="_blank">arc</a> 🥵</h3>
-        <p>still new but already has tons of great features like easy split screen manipulation, in-depth customization, integration with websites like gmail and google calendar, spaces, and arc max</p>
+        {#each appReviews as appReview}
+            <h3><a href="{appReview.link}" target="_blank">{appReview.text}</a> {appReview.outsideLink}</h3>
+            <p>{appReview.review}</p>
+        {/each}
     </div>
 </main>
 </StarBackground>
