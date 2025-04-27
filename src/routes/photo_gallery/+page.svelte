@@ -15,10 +15,14 @@
 
 <Header />
 <main>
+    <h1>photos</h1>
     <Gallery images={imagePaths} gap={10} maxColumnWidth={250} hover={true} />
 </main>
 </StarBackground>
 
 
 <style>
+    h1 {
+        text-align: center;
+    }
 </style>
