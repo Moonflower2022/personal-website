@@ -3,14 +3,14 @@
     import Header from "$lib/Header.svelte"
     import StarBackground from "$lib/StarBackground.svelte"
 
-    const numImages = 17
+    const numImages = 23
     const imagePaths = []
 
     for (let i = 1; i <= numImages; i++) {
         imagePaths.push(`animal_images/${i}.jpeg`)
     }
 
-    const numGifs = 14
+    const numGifs = 20
     const gifPaths = []
 
     for (let i = 1; i <= numGifs; i++) {
