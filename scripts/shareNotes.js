@@ -231,6 +231,17 @@ async function run() {
   }
   if (stubbed.size) console.log(`stubbed missing includes: ${[...stubbed].join(', ')}`);
 
+  // flexbox min-height:auto lets #main-horizontal expand to content height inside the
+  // centered #main column, which clips the page top unreachably (can't scroll up to the
+  // title) and breaks the layout the sidebars/graph expect. exports regenerate this file,
+  // so re-append the fix every run.
+  const mainStyles = path.join(EXPORT_DIR, 'site-lib/styles/main-styles.css');
+  const fixRule = '\n/* share-fix */ #main-horizontal{min-height:0}\n';
+  if (fs.existsSync(mainStyles) && !fs.readFileSync(mainStyles, 'utf8').includes('share-fix')) {
+    fs.appendFileSync(mainStyles, fixRule);
+    console.log('applied share-fix layout rule to main-styles.css');
+  }
+
   console.log(`\nexport complete. live after deploy at:`);
   closure.forEach((f) => console.log(`  ${SITE_BASE}/${slugify(f).replace(/\.md$/, '.html')}`));
   console.log(`\nnext: commit static/share + scripts/share-manifest.json and push to deploy.`);
