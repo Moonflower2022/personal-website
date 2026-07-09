@@ -219,10 +219,15 @@ async function run() {
   // export with stock obsidian styling: vault themes (Border etc.) degrade in export —
   // heading accent bars render as floating red marks, math sizing gets interfered with
   pluginData.exportOptions.themeName = 'Default';
+  pluginData.exportOptions.addPageIcon = true; // title text generation is coupled to the icon builder — false leaves every page-title h1 empty
   fs.writeFileSync(PLUGIN_DATA, `${JSON.stringify(pluginData, null, 2)}\n`);
 
   // the plugin holds settings in memory, so cycle it to pick up the external edit
   console.log('\nreloading plugin + triggering export in obsidian...');
+  // wipe the export dir first: the plugin skips re-rendering pages whose source notes
+  // haven't changed (even with onlyExportModified off), so settings changes never
+  // propagate to existing pages. a missing page always re-renders.
+  fs.rmSync(EXPORT_DIR, { recursive: true, force: true });
   fs.mkdirSync(EXPORT_DIR, { recursive: true }); // export silently no-ops if the target dir is missing
   const before = snapshotExportDir();
   const previousApp = execFileSync('osascript', [
