@@ -255,14 +255,15 @@ async function run() {
     process.exit(1);
   }
 
-  // every include referenced by a page must exist on disk — a missing one gets the
-  // SPA fallback (the full site shell) injected into the note. stub anything absent.
-  const includeRe = /itemprop="include[^"]*" href="([^"]+)"/g;
+  // every asset referenced by a page must exist on disk — a missing one gets the SPA
+  // fallback (the full site shell) served in its place, which injects the site into the
+  // note (includes) or applies garbage (css/js). stub anything absent with an empty file.
+  const refRe = /(?:href|src)="(site-lib\/[^"]+)"/g;
   const stubbed = new Set();
   for (const page of expectedHtml) {
     const html = fs.readFileSync(page, 'utf8');
-    for (const m of html.matchAll(includeRe)) {
-      const target = path.join(EXPORT_DIR, m[1]);
+    for (const m of html.matchAll(refRe)) {
+      const target = path.join(EXPORT_DIR, m[1].split('?')[0]);
       if (!fs.existsSync(target) && !stubbed.has(target)) {
         fs.mkdirSync(path.dirname(target), { recursive: true });
         fs.writeFileSync(target, '');
@@ -270,7 +271,7 @@ async function run() {
       }
     }
   }
-  if (stubbed.size) console.log(`stubbed missing includes: ${[...stubbed].join(', ')}`);
+  if (stubbed.size) console.log(`stubbed missing assets: ${[...stubbed].join(', ')}`);
 
   // flexbox min-height:auto lets #main-horizontal expand to content height inside the
   // centered #main column, which clips the page top unreachably (can't scroll up to the
