@@ -175,6 +175,9 @@ async function run() {
   pluginData.exportOptions.filesToExport = closure;
   pluginData.exportOptions.exportPath = EXPORT_DIR;
   pluginData.onlyExportModified = false; // deterministic full re-render; share sets are small
+  // custom-head emits a reference to a file the plugin never writes (upstream #650);
+  // on the live site that fetch 404s into the SPA fallback and injects the whole site shell
+  pluginData.exportOptions.customHeadOptions.enabled = false;
   fs.writeFileSync(PLUGIN_DATA, `${JSON.stringify(pluginData, null, 2)}\n`);
 
   // the plugin holds settings in memory, so cycle it to pick up the external edit
@@ -210,6 +213,23 @@ async function run() {
     console.error('export did not settle within 3 minutes — check obsidian for errors.');
     process.exit(1);
   }
+
+  // every include referenced by a page must exist on disk — a missing one gets the
+  // SPA fallback (the full site shell) injected into the note. stub anything absent.
+  const includeRe = /itemprop="include[^"]*" href="([^"]+)"/g;
+  const stubbed = new Set();
+  for (const page of expectedHtml) {
+    const html = fs.readFileSync(page, 'utf8');
+    for (const m of html.matchAll(includeRe)) {
+      const target = path.join(EXPORT_DIR, m[1]);
+      if (!fs.existsSync(target) && !stubbed.has(target)) {
+        fs.mkdirSync(path.dirname(target), { recursive: true });
+        fs.writeFileSync(target, '');
+        stubbed.add(target);
+      }
+    }
+  }
+  if (stubbed.size) console.log(`stubbed missing includes: ${[...stubbed].join(', ')}`);
 
   console.log(`\nexport complete. live after deploy at:`);
   closure.forEach((f) => console.log(`  ${SITE_BASE}/${slugify(f).replace(/\.md$/, '.html')}`));
