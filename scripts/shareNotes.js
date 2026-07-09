@@ -293,6 +293,11 @@ async function run() {
   }
   console.log('\ndeploying...');
   execFileSync('git', ['add', 'static/share', 'scripts/share-manifest.json'], { cwd: process.cwd() });
+  const staged = execFileSync('git', ['status', '--porcelain', 'static/share', 'scripts/share-manifest.json'], { cwd: process.cwd() }).toString().trim();
+  if (!staged) {
+    console.log('no changes vs last deploy — already live at the urls above.');
+    return;
+  }
   execFileSync('git', ['commit', '--quiet', '-m', `share: ${manifest.roots.length} roots, ${closure.length} notes`], { cwd: process.cwd() });
   execFileSync('git', ['push', '--quiet', 'origin', 'main'], { cwd: process.cwd() });
   console.log('pushed — live in ~1 minute at the urls above.');

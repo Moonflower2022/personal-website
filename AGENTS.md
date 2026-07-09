@@ -97,6 +97,8 @@ the animated starfield **crashes headless screenshots on tall/dark pages** (hund
 
 ## sharing obsidian notes to /share (recursive note sharing)
 
+**from inside obsidian (the normal way):** the custom `share-to-web` plugin (lives at `~/obsidian_files/home/.obsidian/plugins/share-to-web/`, ~70 lines, no build step) adds three palette commands: "Share current note (+ all linked notes, recursive)", "Share current note only", "Unshare current note". each spawns `/opt/homebrew/bin/node scripts/shareNotes.js <active file> --deploy` in this repo, then shows a notice and copies the live link to the clipboard. it also strips webpage-html-export's own palette commands (they bypass the pipeline: no fixes, no deploy, and delete-old-files nukes sibling shares) and renames the internal export command the script relies on. if node moves off homebrew, update NODE in the plugin's main.js.
+
 `node scripts/shareNotes.js "path/to/Note.md"` shares a note from the home vault (`~/obsidian_files/home`) plus its full recursive wikilink closure at `harrisonqian.com/share/<slugified-path>.html`. exported via the webpage-html-export obsidian plugin into `static/share/` (committed to git — the site rebuilds from the repo on every push, so exports must be committed to survive deploys).
 
 - `scripts/share-manifest.json` is the source of truth for what's shared. every run re-exports the union of all roots' closures; `--remove "Note.md"` unshares. `--dry-run` previews the closure without touching anything — use it before sharing anything link-heavy.
