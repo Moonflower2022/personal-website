@@ -8,7 +8,8 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"sync-media": "rclone copy static/writing/attachments r2:personal-website-media/writing/attachments --transfers 8 --checkers 8"
+		"sync-media": "rclone copy static/writing/attachments r2:personal-website-media/writing/attachments --transfers 8 --checkers 8",
+		"share": "node scripts/shareNotes.js --current --deploy"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^3.0.10",

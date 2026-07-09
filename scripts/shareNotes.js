@@ -22,7 +22,10 @@ const MAX_FILES = 30; // closure bigger than this aborts unless --yes, so a hub 
 
 function loadManifest() {
   if (!fs.existsSync(MANIFEST)) return { roots: [] };
-  return JSON.parse(fs.readFileSync(MANIFEST, 'utf8'));
+  const m = JSON.parse(fs.readFileSync(MANIFEST, 'utf8'));
+  m.roots = m.roots || [];
+  m.singles = m.singles || []; // shared WITHOUT following links (privacy: linked notes stay private)
+  return m;
 }
 
 function walkVaultMarkdown() {
@@ -130,29 +133,64 @@ async function waitForExport(before, expectedHtml) {
   return false;
 }
 
+// the note currently open in obsidian, from the workspace state on disk
+function activeVaultFile() {
+  const ws = JSON.parse(fs.readFileSync(path.join(VAULT, '.obsidian/workspace.json'), 'utf8'));
+  let found = null;
+  (function walk(node) {
+    if (!node || found) return;
+    if (node.id === ws.active && node.state?.state?.file) found = node.state.state.file;
+    (node.children || []).forEach(walk);
+  })(ws.main);
+  if (!found) {
+    const last = (ws.lastOpenFiles || [])[0];
+    if (last) found = last;
+  }
+  if (!found) throw new Error('could not determine the active obsidian file');
+  return found;
+}
+
 async function run() {
   const args = process.argv.slice(2);
   const yes = args.includes('--yes');
   const dryRun = args.includes('--dry-run');
   const listOnly = args.includes('--list');
+  const deploy = args.includes('--deploy');
   const removeIdx = args.indexOf('--remove');
   const removeTarget = removeIdx !== -1 ? args[removeIdx + 1] : null;
   const positional = args.filter((a) => !a.startsWith('--') && a !== removeTarget);
+  if (args.includes('--current')) {
+    const f = activeVaultFile();
+    console.log(`current obsidian file: ${f}`);
+    positional.push(f);
+  }
 
   const manifest = loadManifest();
   if (removeTarget) {
     manifest.roots = manifest.roots.filter((r) => r !== removeTarget);
-    console.log(`removed root: ${removeTarget}`);
+    manifest.singles = manifest.singles.filter((r) => r !== removeTarget);
+    console.log(`removed: ${removeTarget}`);
   }
+  const single = args.includes('--single');
   for (const p of positional) {
-    if (!manifest.roots.includes(p)) manifest.roots.push(p);
+    const list = single ? manifest.singles : manifest.roots;
+    if (!list.includes(p)) list.push(p);
   }
 
   const resolve = buildResolver(walkVaultMarkdown());
   const closure = computeClosure(manifest.roots, resolve);
+  for (const s of manifest.singles) {
+    if (!closure.includes(s)) {
+      if (fs.existsSync(path.join(VAULT, s))) closure.push(s);
+      else console.warn(`  ! single missing from vault, skipping: ${s}`);
+    }
+  }
+  closure.sort();
 
-  console.log(`roots (${manifest.roots.length}):`);
+  console.log(`recursive roots (${manifest.roots.length}):`);
   manifest.roots.forEach((r) => console.log(`  ${r}`));
+  console.log(`singles, links not followed (${manifest.singles.length}):`);
+  manifest.singles.forEach((r) => console.log(`  ${r}`));
   console.log(`closure (${closure.length} notes):`);
   closure.forEach((f) => console.log(`  ${f} -> ${SITE_BASE}/${slugify(f).replace(/\.md$/, '.html')}`));
 
@@ -178,6 +216,9 @@ async function run() {
   // custom-head emits a reference to a file the plugin never writes (upstream #650);
   // on the live site that fetch 404s into the SPA fallback and injects the whole site shell
   pluginData.exportOptions.customHeadOptions.enabled = false;
+  // export with stock obsidian styling: vault themes (Border etc.) degrade in export —
+  // heading accent bars render as floating red marks, math sizing gets interfered with
+  pluginData.exportOptions.themeName = 'Default';
   fs.writeFileSync(PLUGIN_DATA, `${JSON.stringify(pluginData, null, 2)}\n`);
 
   // the plugin holds settings in memory, so cycle it to pick up the external edit
@@ -244,7 +285,16 @@ async function run() {
 
   console.log(`\nexport complete. live after deploy at:`);
   closure.forEach((f) => console.log(`  ${SITE_BASE}/${slugify(f).replace(/\.md$/, '.html')}`));
-  console.log(`\nnext: commit static/share + scripts/share-manifest.json and push to deploy.`);
+
+  if (!deploy) {
+    console.log(`\nnext: commit static/share + scripts/share-manifest.json and push to deploy.`);
+    return;
+  }
+  console.log('\ndeploying...');
+  execFileSync('git', ['add', 'static/share', 'scripts/share-manifest.json'], { cwd: process.cwd() });
+  execFileSync('git', ['commit', '--quiet', '-m', `share: ${manifest.roots.length} roots, ${closure.length} notes`], { cwd: process.cwd() });
+  execFileSync('git', ['push', '--quiet', 'origin', 'main'], { cwd: process.cwd() });
+  console.log('pushed — live in ~1 minute at the urls above.');
 }
 
 run();
