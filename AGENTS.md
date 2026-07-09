@@ -94,3 +94,14 @@ the animated starfield **crashes headless screenshots on tall/dark pages** (hund
 - **Svelte's `muted={isMuted}` on `<video>` doesn't update the property after mount** (DOM `muted` attribute is sticky vs. property). both `Carousel.svelte` and `Gallery.svelte` work around this by binding videos via `bind:this` and imperatively setting `.muted` in the toggle handler.
 - **`adapter-vercel` requires SvelteKit ≥ 2.27** (uses `kit.experimental.remoteFunctions`). older 2.x throws `Cannot read properties of undefined`.
 - **transcoding small mp4s to webm usually makes them bigger.** social-media-sourced clips (TikTok/IG/YouTube rips) are already heavily compressed and don't benefit. only re-encode high-bitrate sources.
+
+## sharing obsidian notes to /share (recursive note sharing)
+
+`node scripts/shareNotes.js "path/to/Note.md"` shares a note from the home vault (`~/obsidian_files/home`) plus its full recursive wikilink closure at `harrisonqian.com/share/<slugified-path>.html`. exported via the webpage-html-export obsidian plugin into `static/share/` (committed to git — the site rebuilds from the repo on every push, so exports must be committed to survive deploys).
+
+- `scripts/share-manifest.json` is the source of truth for what's shared. every run re-exports the union of all roots' closures; `--remove "Note.md"` unshares. `--dry-run` previews the closure without touching anything — use it before sharing anything link-heavy.
+- closures >30 notes abort unless `--yes` (privacy guard: a hub note can drag half the vault onto the public web).
+- **the export only works while obsidian is frontmost.** the plugin renders pages in a hidden window that never paints when the app is backgrounded — exports stall or silently no-op. the script activates Obsidian, exports, then restores the previous app. don't "fix" the activate call away.
+- **the plugin's main.js is hand-patched**: render timeout `4e3` → `4e4` near "Waiting for all sections to be counted" (upstream bug KosmosisDire/obsidian-webpage-export#686, pages with embeds silently drop at 4s). a plugin update will overwrite the patch — if pages start missing from exports after an update, re-apply it.
+- export media (images embedded in shared notes) lands inside `static/share/` next to the pages. exception to the media-goes-to-R2 rule: the plugin manages these paths itself and share sets are small. if a share ever pulls in heavy media, reconsider.
+- obsidian-side settings live in the vault at `.obsidian/plugins/webpage-html-export/data.json`; the script rewrites `filesToExport`/`exportPath` and reloads the plugin (via advanced-uri) each run, so manual edits there don't stick.
