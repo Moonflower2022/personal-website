@@ -1,7 +1,7 @@
 {
   "roots": [
-    "share-test/Share Test.md",
-    "ideaflow/2026-05-06/community insecurity ( social ) bold single.md"
+    "share-test/Share Test.md"
   ],
-  "singles": []
+  "singles": [],
+  "depths": {}
 }
