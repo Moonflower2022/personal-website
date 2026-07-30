@@ -3,6 +3,9 @@
     import SocialIcons from "$lib/SocialIcons.svelte"
     import { page } from "$app/stores"
 
+    // linkedin icon commented out for now (json can't hold comments, so filter it here)
+    const shownIcons = iconInfos.filter((icon) => icon.description !== "linkedin link")
+
     const navLinks = [
         { href: "/", label: "home" },
         { href: "/writing", label: "writing" },
@@ -19,7 +22,7 @@
 </script>
 
 <header>
-    <SocialIcons {iconInfos} size="fa-2x"></SocialIcons>
+    <SocialIcons iconInfos={shownIcons} size="fa-2x"></SocialIcons>
     <nav>
         <ul class="nav-links">
             {#each navLinks as { href, label }}
