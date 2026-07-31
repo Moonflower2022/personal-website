@@ -3,9 +3,15 @@
     import { marked } from 'marked';
     import Header from "$lib/Header.svelte"
     import StarBackground from "$lib/StarBackground.svelte"
+    import { writingPieceSet } from "$lib/writingPieces.js";
 
     const ASSETS = "https://assets.harrisonqian.com";
     const SITE = "https://harrisonqian.com";
+
+    const IMG_EXT = /\.(png|jpe?g|gif|webp|svg|bmp|avif)$/i;
+    function escapeHtml(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
 
     let piece = null;
     let content = '';
@@ -61,21 +67,50 @@
         }, {
             name: 'wikilink',
             level: 'inline',
-            start(src) { return src.match(/\[\[#/)?.index; },
+            start(src) { return src.match(/\[\[/)?.index; },
             tokenizer(src) {
-                const m = src.match(/^\[\[#([^\]|]+?)(?:\|([^\]]+))?\]\]/);
+                // [[target]] or [[target|alias]]. target may be:
+                //   #heading            -> same-page anchor
+                //   essay  /  essay#h   -> link to another published essay
+                //   file.png|500        -> image embed (left untouched here)
+                //   private note        -> plain text (no page to link to)
+                const m = src.match(/^\[\[([^\]|]+?)(?:\|([^\]]+))?\]\]/);
                 if (m) {
                     return {
                         type: 'wikilink',
                         raw: m[0],
                         target: m[1].trim(),
-                        label: (m[2] || m[1]).trim()
+                        alias: m[2] ? m[2].trim() : null
                     };
                 }
             },
             renderer(token) {
-                const id = slugify(token.target);
-                return `<a class="wikilink" href="#${id}" data-target="${id}">${token.label}</a>`;
+                const { target, alias, raw } = token;
+
+                // 1) same-page anchor: [[#heading]]
+                if (target.startsWith('#')) {
+                    const anchor = target.slice(1);
+                    const id = slugify(anchor);
+                    return `<a class="wikilink" href="#${id}" data-target="${id}">${alias ?? anchor}</a>`;
+                }
+
+                const [notePart, headingPart] = target.split('#');
+                const note = notePart.trim();
+
+                // 2) image embed without '!' (e.g. [[foo.png|520]]) — not a note link,
+                //    leave exactly as-is so nothing about image handling changes
+                if (IMG_EXT.test(note)) return raw;
+
+                // 3) cross-essay link -> /writing/<slug>(#heading)
+                const key = note.toLowerCase().replace(/\s+/g, '_');
+                if (writingPieceSet.has(key)) {
+                    const hash = headingPart ? `#${slugify(headingPart)}` : '';
+                    const shown = alias ?? note.replace(/_/g, ' ');
+                    return `<a class="wikilink-note" href="/writing/${key}${hash}">${escapeHtml(shown)}</a>`;
+                }
+
+                // 4) private / unpublished note: nothing to link to on the site
+                return `<span class="wikilink-missing" title="not published on the site">${escapeHtml(alias ?? target)}</span>`;
             }
         }, {
             // ~[content] from obsidian → visible redaction bar; content never reaches the DOM
@@ -592,6 +627,24 @@
 
     .content :global(a.wikilink:hover) {
         opacity: 0.85;
+    }
+
+    /* cross-essay [[links]] — solid link, no dashed anchor styling */
+    .content :global(a.wikilink-note) {
+        color: var(--link-color, #0066cc);
+        text-decoration: none;
+        border-bottom: 1px solid currentColor;
+    }
+
+    .content :global(a.wikilink-note:hover) {
+        opacity: 0.85;
+    }
+
+    /* [[private note]] that isn't published — reads as plain text, not a broken link */
+    .content :global(.wikilink-missing) {
+        color: var(--text-muted, #888);
+        border-bottom: 1px dotted var(--text-faint, #bbb);
+        cursor: help;
     }
 
     /* hover-preview popover */

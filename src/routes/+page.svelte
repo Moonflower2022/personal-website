@@ -3,10 +3,10 @@
     import Header from "$lib/Header.svelte";
     import StarBackground from "$lib/StarBackground.svelte";
     import Carousel from "$lib/Carousel.svelte";
+    import ContactInfo from "$lib/ContactInfo.svelte";
     import durations from "$lib/assets/carouselDurations.json";
 
     let hoveredInterest = null;
-    let showContactInfo = false;
 
     // carousel deep-linking: a link on the page whooshes toward the carousel,
     // which then spins to the target item
@@ -177,11 +177,6 @@
             name: path.split('/').pop(),
             src
         }));
-
-    
-    function toggleContactInfo() {
-        showContactInfo = !showContactInfo;
-    }
 </script>
 
 <StarBackground>
@@ -198,26 +193,9 @@
             </ul>
             <p>some of what ive built is in <a href="/projects">my projects page</a>. i like writing down my thoughts a lot, so i have posted some in a <a href="/writing">writing page</a> and a <a href="/poetry">poetry page</a></p>
             <p>(if you want a fast track to getting to know me more i have put some media that represents me well in a <a href="/vibes">vibes page</a>)</p>
-            <p>feel free to look around or <button class="say-hi-btn" on:click={toggleContactInfo}>say hi</button>! i respond to everyone :)</p>
-
-            <div
-                class="contact-info"
-                class:open={showContactInfo}
-                aria-hidden={!showContactInfo}
-            >
-                <div class="contact-item" style="--i: 0">
-                    <i class="fa fa-envelope"></i>
-                    <span><a href="mailto:harrisonq125@gmail.com">harrisonq125@gmail.com</a></span>
-                </div>
-                <div class="contact-item" style="--i: 1">
-                    <i class="fa-brands fa-discord"></i>
-                    <span><a href="https://discord.com/users/1297739861649920053">harqian</a></span>
-                </div>
-                <div class="contact-item" style="--i: 2">
-                    <i class="fa fa-video"></i>
-                    <span><a href="https://calendar.app.google/RJPd9A49VgwTbQWdA">meeting link</a></span>
-                </div>
-            </div>
+            <ContactInfo let:toggle>
+                <p>feel free to look around or <button class="say-hi-btn" on:click={toggle}>say hi</button>! i respond to everyone :)</p>
+            </ContactInfo>
 
         </div>
         <div class="hero-side">
@@ -473,88 +451,6 @@
         color: var(--text-muted);
     }
 
-    .say-hi-btn {
-        background: none;
-        border: none;
-        color: var(--link-color);
-        text-decoration: underline;
-        cursor: pointer;
-        font-size: inherit;
-        font-family: inherit;
-        padding: 0;
-        margin: 0;
-        transition: opacity 0.3s;
-    }
-    
-    .say-hi-btn:hover {
-        opacity: 0.7;
-    }
-    
-    .contact-info {
-        padding: 1rem;
-        background: var(--surface-2);
-        border-radius: 8px;
-        box-shadow:
-            0 0 0 1px var(--border),
-            0 1px 2px var(--shadow-strong);
-        overflow: hidden;
-
-        max-height: 0;
-        margin-top: 0;
-        padding-top: 0;
-        padding-bottom: 0;
-        opacity: 0;
-        transition:
-            max-height 0.35s ease,
-            margin-top 0.35s ease,
-            padding-top 0.35s ease,
-            padding-bottom 0.35s ease,
-            opacity 0.25s ease;
-    }
-
-    .contact-info.open {
-        max-height: 400px;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-        opacity: 1;
-    }
-
-    .contact-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
-        font-size: 1.1rem;
-
-        opacity: 0;
-        transform: translateY(8px);
-        filter: blur(4px);
-        transition:
-            opacity 0.3s ease,
-            transform 0.3s ease,
-            filter 0.3s ease;
-        transition-delay: 0s;
-    }
-
-    .contact-info.open .contact-item {
-        opacity: 1;
-        transform: translateY(0);
-        filter: blur(0);
-        transition-delay: calc(120ms + var(--i) * 80ms);
-    }
-
-    .contact-item:last-child {
-        margin-bottom: 0;
-    }
-
-    .contact-item i {
-        color: var(--link-color);
-        width: 20px;
-        /* optical nudge: icon glyphs often sit slightly above the text baseline */
-        transform: translateY(1px);
-    }
-        
     @media (max-width: 768px) {
         .hero {
             grid-template-columns: 1fr;

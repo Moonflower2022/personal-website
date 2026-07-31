@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import Header from "$lib/Header.svelte";
     import StarBackground from "$lib/StarBackground.svelte";
+    import ContactInfo from "$lib/ContactInfo.svelte";
 
     // Add your piece filenames here (without .md extension)
     const pieceFilenames = [
@@ -95,7 +96,9 @@
             <section class="section">
                 <h2>poetry</h2>
                 <p>started because REALLY REALLY whacky (in a good way) friend encouraged me; having lots of fun!</p>
-                <p>just like for <a href="/writing">writing</a>, if any of this resonates with you, id love to hear about it! (contact info on <a href="/">home page</a>)</p>
+                <ContactInfo let:toggle>
+                    <p>just like for <a href="/writing">writing</a>, if any of this resonates with you, id love to hear about it! (<button class="say-hi-btn" on:click={toggle}>contact info</button>)</p>
+                </ContactInfo>
                 <hr class="horizontal-line">
             </section>
         {#each poetry as piece}

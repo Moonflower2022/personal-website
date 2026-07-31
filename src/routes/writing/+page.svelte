@@ -3,25 +3,11 @@
     import { parseISO } from 'date-fns';
     import Header from "$lib/Header.svelte";
     import StarBackground from "$lib/StarBackground.svelte";
+    import ContactInfo from "$lib/ContactInfo.svelte";
+    import { writingPieces } from "$lib/writingPieces.js";
 
-    // Add your piece filenames here (without .md extension)
-    const pieceFilenames = [
-        "everything_popular_is_wrong",
-        "i_believe_in_speed",
-        "on_connection",
-        "disk_cleaning_is_a_trap",
-        "my_learning_stack",
-        "vibe_coding_manifesto",
-        "i_used_to_be_a_zombie",
-        "water_bottles",
-        "a_glimpse_into_consciousness",
-        "how_confidence_changed_my_life",
-        "addiction",
-        "math_in_the_mountains",
-        "reflection",
-        "learning_understanding_connections",
-        "branding"
-    ];
+    // published essays live in $lib/writingPieces.js (shared with the [[wikilink]] resolver)
+    const pieceFilenames = writingPieces;
 
     let writing = [];
 
@@ -105,7 +91,9 @@
         <div class="column">
             <section class="section">
                 <h2>writing</h2>
-                <p>lmk if any of this resonates with you! i am always looking for people that have similar thinking to me (contact info on <a href="/">home page</a>)</p>
+                <ContactInfo let:toggle>
+                    <p>lmk if any of this resonates with you! i am always looking for people that have similar thinking to me (<button class="say-hi-btn" on:click={toggle}>contact info</button>)</p>
+                </ContactInfo>
                 <hr class="horizontal-line">
             </section>
         {#each writing as piece}
