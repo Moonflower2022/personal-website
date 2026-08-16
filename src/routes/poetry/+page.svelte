@@ -97,7 +97,7 @@
                 <h2>poetry</h2>
                 <p>started because REALLY REALLY whacky (in a good way) friend encouraged me; having lots of fun!</p>
                 <ContactInfo let:toggle>
-                    <p>just like for <a href="/writing">writing</a>, if any of this resonates with you, id love to hear about it! (<button class="say-hi-btn" on:click={toggle}>contact info</button>)</p>
+                    <p>if any of this resonates with you, <button class="say-hi-btn" on:click={toggle}>lmk</button>!</p>
                 </ContactInfo>
                 <hr class="horizontal-line">
             </section>

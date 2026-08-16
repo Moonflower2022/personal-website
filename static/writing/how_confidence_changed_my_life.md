@@ -1,5 +1,5 @@
 ---
-subtitle: "a reflection"
+subtitle: "a reflection with rationalist tendencies i dont fully agree with anymore"
 date: "2025-06-15"
 edited: "2025-06-16"
 tags: 

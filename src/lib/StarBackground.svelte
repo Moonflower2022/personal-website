@@ -112,59 +112,57 @@
       return angleToCenter * centerBias + randomAngle * (1 - centerBias - currentDirectionBias) + currentAngle * currentDirectionBias;
     }
     
-    // Generate stars for each layer
+    // one star of a given layer, randomly placed within the current field
+    function makeStar(layer) {
+      const x = random(0, width);
+      const y = random(0, height);
+      const star = {
+        x,
+        y,
+        seedY: y,
+        size: random(starSize[layer][0], starSize[layer][1]),
+        opacity: random(starOpacity[layer][0], starOpacity[layer][1]),
+        speed: random(starBaseSpeed[0], starBaseSpeed[1]),
+        angle: newAngleTowardCenterAndCurrentDirection(x, y, 0, 0, 0),
+        changeDirectionCounter: 0
+      };
+      if (layer === 'large') star.twinkleSpeed = random(0.01, 0.05);
+      return star;
+    }
+
+    // full (re)generation — only used for the initial field
     function generateStars() {
       if (!mounted || !width || !height) return;
-      
-      // Update center coordinates
       centerX = width / 2;
       centerY = height / 2;
-      
       stars = {
-        small: Array(starCount.small).fill().map(() => {
-          const x = random(0, width);
-          const y = random(0, height);
-          return {
-            x,
-            y,
-            seedY: y,
-            size: random(starSize.small[0], starSize.small[1]),
-            opacity: random(starOpacity.small[0], starOpacity.small[1]),
-            speed: random(starBaseSpeed[0], starBaseSpeed[1]),
-            angle: newAngleTowardCenterAndCurrentDirection(x, y, 0, 0, 0), // Small bias to center
-            changeDirectionCounter: 0
-          };
-        }),
-        medium: Array(starCount.medium).fill().map(() => {
-          const x = random(0, width);
-          const y = random(0, height);
-          return {
-            x,
-            y,
-            seedY: y,
-            size: random(starSize.medium[0], starSize.medium[1]),
-            opacity: random(starOpacity.medium[0], starOpacity.medium[1]),
-            speed: random(starBaseSpeed[0], starBaseSpeed[1]),
-            angle: newAngleTowardCenterAndCurrentDirection(x, y, 0, 0, 0), // Medium bias to center
-            changeDirectionCounter: 0
-          };
-        }),
-        large: Array(starCount.large).fill().map(() => {
-          const x = random(0, width);
-          const y = random(0, height);
-          return {
-            x,
-            y,
-            seedY: y,
-            size: random(starSize.large[0], starSize.large[1]),
-            opacity: random(starOpacity.large[0], starOpacity.large[1]),
-            speed: random(starBaseSpeed[0], starBaseSpeed[1]),
-            angle: newAngleTowardCenterAndCurrentDirection(x, y, 0, 0, 0), // Strong bias to center
-            twinkleSpeed: random(0.01, 0.05),
-            changeDirectionCounter: 0
-          };
-        })
+        small: Array.from({ length: starCount.small }, () => makeStar('small')),
+        medium: Array.from({ length: starCount.medium }, () => makeStar('medium')),
+        large: Array.from({ length: starCount.large }, () => makeStar('large'))
       };
+    }
+
+    // grow/shrink the field to match starCount WITHOUT disturbing existing stars.
+    // this is what page-height changes (e.g. the "say hi" dropdown expanding) use, so the
+    // starfield never flickers/regenerates — it just gains or drops a few stars at the tail.
+    function reconcileStars() {
+      if (!mounted || !width || !height) return;
+      centerX = width / 2;
+      centerY = height / 2;
+      if (!stars.small.length && !stars.medium.length && !stars.large.length) {
+        generateStars();
+        return;
+      }
+      for (const layer of ['small', 'medium', 'large']) {
+        const target = starCount[layer];
+        const arr = stars[layer];
+        if (arr.length < target) {
+          for (let i = arr.length; i < target; i++) arr.push(makeStar(layer));
+          stars[layer] = arr; // reassign for svelte reactivity
+        } else if (arr.length > target) {
+          stars[layer] = arr.slice(0, target);
+        }
+      }
     }
     
     // Animate stars
@@ -269,11 +267,19 @@
       };
       
       if (mounted) {
-        generateStars();
+        reconcileStars();
         generateClouds();
       }
     }
-    
+
+    // debounce resize-driven recounts so a height animation (e.g. the "say hi" dropdown
+    // sliding open over 0.35s) collapses to a single settled update instead of firing per-frame
+    let starUpdateTimer;
+    function scheduleStarUpdate() {
+      clearTimeout(starUpdateTimer);
+      starUpdateTimer = setTimeout(updateStarCount, 150);
+    }
+
     let resizeObserver;
     
     onMount(() => {
@@ -284,8 +290,8 @@
       // Initialize star count and set up resize observer
       updateStarCount();
       
-      // Observe body for size changes
-      resizeObserver = new ResizeObserver(updateStarCount);
+      // Observe body for size changes (debounced; reconciles rather than regenerates)
+      resizeObserver = new ResizeObserver(scheduleStarUpdate);
       resizeObserver.observe(document.body);
       
       // Start animation after initial setup
@@ -296,6 +302,7 @@
         if (resizeObserver) {
           resizeObserver.disconnect();
         }
+        clearTimeout(starUpdateTimer);
         if (animationFrameId) {
           cancelAnimationFrame(animationFrameId);
         }
@@ -308,9 +315,9 @@
       }
     });
     
-    // Re-generate stars when dimensions change
+    // Re-count stars when dimensions change (debounced + reconciled, so it never flickers)
     $: if (mounted && width && height) {
-      updateStarCount();
+      scheduleStarUpdate();
     }
     
     // Calculate parallax positions for each layer

@@ -4,17 +4,18 @@
     import Header from "$lib/Header.svelte";
     import StarBackground from "$lib/StarBackground.svelte";
     import ContactInfo from "$lib/ContactInfo.svelte";
-    import { writingPieces } from "$lib/writingPieces.js";
+    import { writingIndexPieces } from "$lib/writingPieces.js";
 
-    // published essays live in $lib/writingPieces.js (shared with the [[wikilink]] resolver)
-    const pieceFilenames = writingPieces;
+    // essays shown on this index live in $lib/writingPieces.js (note-category ones are shown on /notes instead)
+    const pieceFilenames = writingIndexPieces;
 
     let writing = [];
 
     onMount(async () => {
         try {
             // Fetch and parse each piece's metadata
-            const writingPromises = pieceFilenames.map(async (filename) => {
+            const writingPromises = pieceFilenames.map(async (piece) => {
+                const filename = piece.slug;
                 const writingResponse = await fetch(`/writing/${filename}.md`);
                 const content = await writingResponse.text();
 
@@ -67,6 +68,7 @@
                     const titleFromFilename = filename.replace(/\.md$/, '').replace(/_/g, ' ');
                     return {
                         filename,
+                        star: piece.star,
                         title: metadata.title || titleFromFilename,
                         ...metadata
                     };
@@ -92,7 +94,7 @@
             <section class="section">
                 <h2>writing</h2>
                 <ContactInfo let:toggle>
-                    <p>lmk if any of this resonates with you! i am always looking for people that have similar thinking to me (<button class="say-hi-btn" on:click={toggle}>contact info</button>)</p>
+                    <p>if any of this resonates with you, <button class="say-hi-btn" on:click={toggle}>lmk</button>!</p>
                 </ContactInfo>
                 <hr class="horizontal-line">
             </section>
@@ -107,6 +109,7 @@
                         >
                             {piece.title}
                         </a>
+                        {#if piece.star}<span class="effort-star" title="high effort post">★</span>{/if}
                     </h3>
                 </div>
                 <div class="meta-row">
@@ -168,5 +171,13 @@
     .title-row h3 a:hover {
         color: var(--link-color, #0066cc);
         text-decoration: underline;
+    }
+
+    /* high-effort badge */
+    .effort-star {
+        color: var(--accent-yellow, #f5a623);
+        font-size: 0.85em;
+        margin-left: 0.4rem;
+        vertical-align: 0.05em;
     }
 </style>

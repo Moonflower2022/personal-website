@@ -1,6 +1,6 @@
 ---
-title: "reflecting on reflection (reflection is astoundingly good)"
-subtitle: "reflection all the way down..."
+title: "reflecting on reflection"
+subtitle: "turtles all the way down"
 date: "2025-08-11"
 edited: "2025-08-14"
 tags: 

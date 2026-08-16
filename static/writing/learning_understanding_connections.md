@@ -1,6 +1,6 @@
 ---
-title: "learning <- understanding <- perspective, connections <- experiences, people"
-subtitle: "brain dump of some reflections :)"
+title: "learning by doing"
+subtitle: "an interconnected web of concepts realted to experience"
 date: "2025-09-07"
 tags: 
     - personal

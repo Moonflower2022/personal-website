@@ -8,6 +8,14 @@
     const ASSETS = "https://assets.harrisonqian.com";
     const SITE = "https://harrisonqian.com";
 
+    // socratica triple-sparkle mark (from socratica-website favicon.svg), recolored to
+    // currentColor so it adapts to light/dark. rendered in place of each `---` section break.
+    const SOCRATICA_MARK = `<svg viewBox="0 0 215 215" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M108.104 105.83c-4.473 0-7.178-2.912-6.97-7.441l1.04-21.244-18.83 12.94c-1.144.863-2.6 1.294-4.265 1.294-3.329 0-6.554-2.696-6.554-7.225 0-2.803 1.249-4.637 3.953-6.254l19.87-10.892-19.87-10.892c-2.704-1.51-3.953-3.45-3.953-6.254 0-4.422 3.225-7.118 6.554-7.118 1.665 0 3.121.432 4.266 1.187l18.829 12.617-1.04-22.107c-.208-4.53 2.497-7.441 6.97-7.441 4.265 0 6.762 2.696 6.658 7.44l-1.144 22.108 18.621-12.617c1.145-.755 2.601-1.187 4.266-1.187 3.329 0 6.554 2.696 6.554 7.118 0 2.803-1.249 4.745-3.954 6.254l-19.87 10.892 19.87 10.892c2.705 1.617 3.954 3.45 3.954 6.254 0 4.53-3.225 7.225-6.554 7.225-1.665 0-3.121-.43-4.266-1.294l-18.621-12.94 1.144 21.244c.208 4.745-2.393 7.441-6.658 7.441m-44.525 78.937c-4.474 0-7.178-2.911-6.97-7.44l1.04-21.245-18.83 12.941c-1.144.863-2.6 1.294-4.265 1.294-3.329 0-6.554-2.696-6.554-7.225 0-2.804 1.248-4.637 3.953-6.255l19.87-10.891-19.87-10.892c-2.705-1.51-3.953-3.451-3.953-6.255 0-4.421 3.225-7.117 6.554-7.117 1.664 0 3.12.431 4.265 1.186l18.83 12.617-1.04-22.107c-.209-4.529 2.496-7.44 6.97-7.44 4.265 0 6.762 2.696 6.658 7.44l-1.145 22.107 18.622-12.617c1.144-.755 2.6-1.186 4.265-1.186 3.33 0 6.554 2.696 6.554 7.117 0 2.804-1.248 4.745-3.953 6.255l-19.87 10.892 19.87 10.891c2.705 1.618 3.953 3.451 3.953 6.255 0 4.529-3.225 7.225-6.554 7.225-1.664 0-3.12-.431-4.265-1.294l-18.622-12.941 1.145 21.245c.208 4.744-2.393 7.44-6.658 7.44m89.467 0c-4.474 0-7.179-2.911-6.971-7.44l1.041-21.245-18.83 12.941c-1.144.863-2.601 1.294-4.265 1.294-3.329 0-6.554-2.696-6.554-7.225 0-2.804 1.248-4.637 3.953-6.255l19.87-10.891-19.87-10.892c-2.705-1.51-3.953-3.451-3.953-6.255 0-4.421 3.225-7.117 6.554-7.117 1.664 0 3.121.431 4.265 1.186l18.83 12.617-1.041-22.107c-.208-4.529 2.497-7.44 6.971-7.44 4.265 0 6.762 2.696 6.658 7.44l-1.145 22.107 18.622-12.617c1.144-.755 2.601-1.186 4.265-1.186 3.329 0 6.554 2.696 6.554 7.117 0 2.804-1.248 4.745-3.953 6.255l-19.87 10.892 19.87 10.891c2.705 1.618 3.953 3.451 3.953 6.255 0 4.529-3.225 7.225-6.554 7.225-1.664 0-3.121-.431-4.265-1.294l-18.622-12.941 1.145 21.245c.208 4.744-2.393 7.44-6.658 7.44"/></svg>`;
+
+    // per-document map: raw footnote id -> sequential display number (order of first reference).
+    // set by loadPiece() before marked.parse; read by the footnote-ref renderer below.
+    let footnoteDisplayMap = {};
+
     const IMG_EXT = /\.(png|jpe?g|gif|webp|svg|bmp|avif)$/i;
     function escapeHtml(s) {
         return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -51,6 +59,10 @@
                 // trailing "#" lets readers copy a direct link to this section (click handler attached post-render)
                 const anchor = `<a class="heading-anchor" href="#${id}" data-heading-id="${id}" aria-label="copy link to this section" title="copy link to this section">#</a>`;
                 return `<h${depth} id="${id}">${text}${anchor}</h${depth}>\n`;
+            },
+            // `---` section breaks render as a centered socratica mark with generous vertical space
+            hr() {
+                return `<div class="section-break" role="separator">${SOCRATICA_MARK}</div>\n`;
             }
         },
         extensions: [{
@@ -62,7 +74,9 @@
                 if (m) return { type: 'footnote', raw: m[0], text: m[1] };
             },
             renderer(token) {
-                return `<sup><a href="#fn-${token.text}" id="fnref-${token.text}" class="footnote-ref">${token.text}</a></sup>`;
+                // display sequential number (order of appearance); anchors still key off the raw id
+                const num = footnoteDisplayMap[token.text] ?? token.text;
+                return `<sup><a href="#fn-${token.text}" id="fnref-${token.text}" class="footnote-ref">${num}</a></sup>`;
             }
         }, {
             name: 'wikilink',
@@ -204,12 +218,23 @@
                 const titleFromSlug = slug.replace(/\.md$/, '').replace(/_/g, ' ');
                 piece = { ...metadata, title: metadata.title || titleFromSlug };
                 
-                // Process footnote definitions and convert to HTML
-                let processedContent = markdownContent.replace(/^\[\^([^\]]+)\]:\s*(.+)$/gm, (match, id, text) => {
-                    return `<div class="footnote-def" id="fn-${id}">
-                        <a href="#fnref-${id}" class="footnote-number">${id}</a>
-                        <span class="footnote-text">${marked.parseInline(text)}</span>
-                    </div>`;
+                // obsidian comments %%...%% are hidden in reading view — strip so they don't leak as literal text
+                let processedContent = markdownContent.replace(/%%[\s\S]*?%%/g, '');
+
+                // pull footnote definitions out of the body; they're re-emitted at the end, ordered
+                // and numbered by order of first reference so deletions never leave gaps in the numbering
+                const footnoteDefs = {};
+                processedContent = processedContent.replace(/^\[\^([^\]]+)\]:[ \t]*(.+)$/gm, (match, id, text) => {
+                    footnoteDefs[id] = text.trim();
+                    return '';
+                });
+
+                // assign sequential display numbers by order of first reference in the body
+                footnoteDisplayMap = {};
+                let footnoteCounter = 0;
+                processedContent.replace(/\[\^([^\]\s]+)\]/g, (match, id) => {
+                    if (!(id in footnoteDisplayMap)) footnoteDisplayMap[id] = ++footnoteCounter;
+                    return match;
                 });
 
                 // obsidian image embeds: ![[file.png|500]] or ![[file.png|500x300]] -> <img>
@@ -224,6 +249,29 @@
                     }
                     return `<img class="embed-img" src="${src}" alt="${hint || ''}" loading="lazy" />`;
                 });
+
+                // consecutive image embeds (2+ in a row, separated only by blank lines) become a
+                // horizontal scroll gallery with all images the same height. a stray obsidian `[]()`
+                // between embeds is dropped. single images stay as normal block images.
+                processedContent = processedContent.replace(
+                    /(?:<img class="embed-img"[^>]*\/>(?:\s*\[\]\([^)]*\))?\s*){2,}/g,
+                    (run) => {
+                        const imgs = run.replace(/\[\]\([^)]*\)/g, '').trim();
+                        return `\n\n<div class="img-scroll">\n${imgs}\n</div>\n\n`;
+                    }
+                );
+
+                // append the footnote list, ordered by display number (order of first reference)
+                const orderedFootnotes = Object.keys(footnoteDefs)
+                    .filter((id) => id in footnoteDisplayMap)
+                    .sort((a, b) => footnoteDisplayMap[a] - footnoteDisplayMap[b]);
+                if (orderedFootnotes.length) {
+                    const defsHtml = orderedFootnotes.map((id) => `<div class="footnote-def" id="fn-${id}">
+                        <a href="#fnref-${id}" class="footnote-number">${footnoteDisplayMap[id]}</a>
+                        <span class="footnote-text">${marked.parseInline(footnoteDefs[id])}</span>
+                    </div>`).join('\n');
+                    processedContent += `\n\n${defsHtml}\n`;
+                }
 
                 // Parse the markdown content
                 content = marked.parse(processedContent);
@@ -543,6 +591,48 @@
         max-width: 100%;
         height: auto;
         border-radius: 4px;
+    }
+
+    /* horizontal scroll gallery for consecutive image embeds — all same height, and it
+       breaks out wider than the text column (extends left + right past the prose) */
+    .content :global(.img-scroll) {
+        display: flex;
+        gap: 0.75rem;
+        overflow-x: auto;
+        width: 90vw;
+        margin: 1.5rem 0 1.5rem calc(50% - 45vw);
+        padding-bottom: 0.5rem;
+        scroll-snap-type: x proximity;
+    }
+    .content :global(.img-scroll img) {
+        height: 340px;
+        width: auto;
+        max-width: none;
+        margin: 0;
+        flex: 0 0 auto;
+        scroll-snap-align: start;
+        border-radius: 4px;
+    }
+    /* Spotify (and other) embeds sit flush like a block image */
+    .content :global(iframe) {
+        display: block;
+        margin: 1.5rem 0;
+        max-width: 100%;
+        border-radius: 12px;
+    }
+
+    /* `---` section breaks: a centered socratica mark with generous vertical space (no bar) */
+    .content :global(.section-break) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 4rem 0;
+    }
+    .content :global(.section-break svg) {
+        width: 28px;
+        height: 28px;
+        color: var(--text-muted);
+        opacity: 0.85;
     }
 
     /* Table of contents */

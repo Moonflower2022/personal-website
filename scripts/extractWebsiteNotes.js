@@ -9,6 +9,17 @@ const DEFAULT_OUTPUT_PATH = path.resolve(process.cwd(), 'src/lib/websiteNotes.js
 const LEGACY_NOTES_DIR = path.resolve(process.cwd(), 'static/notes');
 const PUBLISH_TAG = 'publishonwebsite';
 
+// ideaflow notes explicitly unpublished from the site. ids are stable, so without this a future
+// re-export + regenerate would resurrect them (the tag can't be removed from ideaflow here).
+const SUPPRESSED_IDS = new Set([
+  'mDl1nG_N0t3', // on modeling
+  'T1z7HRjKKn', // poorly vibe coded apps are bad
+  'YWtzu4HKbA', // operation big items
+  'lxdyZ3xlQa', // wow
+  'OQdPDgNpRW', // episodic memory builder
+  '1D9KLo_A6n' // idea of "things ... impact people differently"
+]);
+
 function normalizeTag(rawTag) {
   return String(rawTag || '')
     .trim()
@@ -249,6 +260,7 @@ function run() {
   const legacyNotes = loadLegacyMarkdownNotes();
 
   const websiteNotes = [...legacyNotes, ...exportNotes]
+    .filter((note) => !SUPPRESSED_IDS.has(note.id))
     .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
 
   const outputData = {
